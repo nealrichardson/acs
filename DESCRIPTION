@@ -2,7 +2,7 @@ Package: acs
 Type: Package
 Title: Download, Manipulate, and Present American Community Survey and
         Decennial Data from the US Census
-Version: 2.0
+Version: 3.0
 Date: 2016-03-08
 Authors@R: c(person("Ezra Haber", "Glenn", role = c("aut", "cre"),
 		     email = "eglenn@mit.edu"))
