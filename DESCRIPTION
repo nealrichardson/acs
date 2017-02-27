@@ -20,12 +20,17 @@ Description: Provides a general toolkit for downloading, managing,
   standard operations on acs objects and present/plot data in
   statistically appropriate ways. Current version is 2.0 +/- .033.
 Suggests:
-Imports: graphics, stats, utils, RCurl
-Depends: R (>= 2.10), stringr, methods, plyr, XML
+    testthat
+Imports:
+    graphics,
+    stats,
+    utils,
+    RCurl
+Depends:
+    R (>= 2.10),
+    stringr,
+    methods,
+    plyr,
+    XML
 License: GPL-3
 LazyData: yes
-LazyLoad: yes
-NeedsCompilation: no
-Packaged: 2016-03-17 21:58:22 UTC; eglenn
-Repository: CRAN
-Date/Publication: 2016-03-18 00:17:55
