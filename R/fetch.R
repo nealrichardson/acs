@@ -1,6 +1,6 @@
 acs.fetch <- function (endyear, span = 5, geography, table.name, table.number,
     variable, keyword, dataset = "acs", key, col.names = "auto", ...) {
-        
+
     var.max <- 40  # most var for acs call; keep even;
     # check some basic stuff about arguments
     if (missing(key)) {
@@ -198,6 +198,5 @@ acs.fetch <- function (endyear, span = 5, geography, table.name, table.number,
     if (endyear(acs.obj) <= 2005)
         acs.obj@standard.error <- acs.obj@standard.error/1.65 else acs.obj@standard.error <- acs.obj@standard.error/1.645
     acs.obj <- .acs.dimnames(acs.obj)
-    # if (obj.combine) {acs.obj=apply(acs.obj, FUN=sum, MARGIN=1)}
     acs.obj
 }
