@@ -42,7 +42,7 @@ geo.make(us, region, division, state, county, county.subdivision,
   state.legislative.district.lower, puma, zip.code,
   american.indian.area, school.district.elementary,
   school.district.secondary, school.district.unified,
-  combine = F, combine.term = "aggregate", check = FALSE, key = "auto")
+  combine = FALSE, combine.term = "aggregate", check = FALSE, key = "auto")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

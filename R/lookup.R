@@ -45,7 +45,7 @@ setMethod(f = "[", signature = "acs.lookup", definition = function(x, i, j, ...,
 })
 
 acs.lookup <- function(endyear, span = 5, dataset = "acs", keyword, table.name, table.number,
-    case.sensitive = T) {
+    case.sensitive = TRUE) {
     arglist <- as.list(environment())
     if (!missing(table.number)) {
         if (!missing(table.name))
@@ -63,7 +63,7 @@ acs.lookup <- function(endyear, span = 5, dataset = "acs", keyword, table.name, 
         return(NA)
     }
     if (!missing(keyword) && sum(unlist(lapply(X = keyword, FUN = grepl, "Margin Of Error For",
-        ignore.case = T))) > 0) {
+        ignore.case = TRUE))) > 0) {
         warning("'keyword' marching string 'Margin Of Error For' not permitted\n  Returning NA")
         return(NA)
     }
@@ -220,5 +220,5 @@ acs.lookup <- function(endyear, span = 5, dataset = "acs", keyword, table.name, 
     gc()
     new(Class = "acs.lookup", endyear = endyear, span = span, args = arglist, results = data.frame(variable.code = names,
         table.number = table.numbers, table.name = table.names, variable.name = values,
-        stringsAsFactors = F))
+        stringsAsFactors = FALSE))
 }

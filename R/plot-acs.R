@@ -1,6 +1,6 @@
 setMethod("plot", signature(x = "acs"), function(x, conf.level = 0.95, err.col = "red",
     err.lwd = 1, err.pch = "-", err.cex = 2, err.lty = 2, x.res = 300, labels = "auto",
-    by = "geography", true.min = T, ...) {
+    by = "geography", true.min = TRUE, ...) {
     # internal plot function to plot individual x-y plots with conf intervals, assume
     # that either i or j or length 1
     plot.xy.acs <- function(x, object, conf.int.upper, conf.int.lower, estimates,
@@ -12,9 +12,9 @@ setMethod("plot", signature(x = "acs"), function(x, conf.level = 0.95, err.col =
         plot(rep(x, 2), c(conf.int.upper, conf.int.lower), type = "n", xaxt = "n",
             xlab = xlab, ylab = ylab, ...)
         axis(side = 1, labels = labels, at = x, ...)
-        lines(x = matrix(c(x, x, rep(NA, length(x))), ncol = length(x), byrow = T),
+        lines(x = matrix(c(x, x, rep(NA, length(x))), ncol = length(x), byrow = TRUE),
             matrix(c(conf.int.lower, conf.int.upper, rep(NA, length(x))), ncol = length(x),
-                byrow = T), col = err.col, lwd = err.lwd, lty = err.lty)
+                byrow = TRUE), col = err.col, lwd = err.lwd, lty = err.lty)
         points(x, conf.int.upper, pch = err.pch, cex = err.cex, col = err.col)
         points(x, conf.int.lower, pch = err.pch, cex = err.cex, col = err.col)
         points(x, estimates, ...)

@@ -29,7 +29,7 @@ Census.  }
 
 \usage{
 acs.lookup(endyear, span = 5, dataset = "acs", keyword,
-     table.name, table.number, case.sensitive = T)
+     table.name, table.number, case.sensitive = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

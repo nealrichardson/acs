@@ -12,7 +12,7 @@ read.acs <- function(filename, endyear = "auto", span = "auto", col.names = "aut
             warning("Can't determine endyear from filename;\nplease set manually before proceeding.\nSetting endyear to default of 2010.\nOperations with this acs object may not be reliable...")
             endyear <- 2010
         } else {
-            warning("Guessing endyear of ", endyear, " based on filename...", call. = F)
+            warning("Guessing endyear of ", endyear, " based on filename...", call. = FALSE)
         }
     }
     # Attempt to automatically determine span from filename if necessary.
@@ -25,7 +25,7 @@ read.acs <- function(filename, endyear = "auto", span = "auto", col.names = "aut
             warning("Can't determine span from filename;\nplease set manually before proceeding.\nSetting span to default of 1.\nOperations with this acs object may not be reliable...")
             span <- 1
         } else {
-            warning("Guessing span of ", span, " based on filename...", call. = F)
+            warning("Guessing span of ", span, " based on filename...", call. = FALSE)
         }
     }
     span <- as.integer(span)
@@ -37,15 +37,15 @@ read.acs <- function(filename, endyear = "auto", span = "auto", col.names = "aut
     # set geocols
     if (identical(geocols, "auto")) {
         geocols <- 3:1
-        warning("Using first three columns as geographic headers.", call. = F)
+        warning("Using first three columns as geographic headers.", call. = FALSE)
     }
 
     if (identical(str_sub(filename, start = -4), ".zip")) {
         zip.filename <- filename
-        contents <- unzip(zip.filename, list = T)
-        acs.filename <- grep(pattern = "with_ann.csv", x = contents[[1]], value = T)
+        contents <- unzip(zip.filename, list = TRUE)
+        acs.filename <- grep(pattern = "with_ann.csv", x = contents[[1]], value = TRUE)
         if (length(acs.filename) == 0)
-            acs.filename <- grep(pattern = "[0-9].csv", x = contents[[1]], value = T)
+            acs.filename <- grep(pattern = "[0-9].csv", x = contents[[1]], value = TRUE)
         make.con <- function() {
             unz(description = zip.filename, filename = acs.filename)
         }
@@ -59,7 +59,7 @@ read.acs <- function(filename, endyear = "auto", span = "auto", col.names = "aut
         con <- make.con()
         open(con)
         i <- 0
-        while (str_sub(scan(con, what = "", nlines = 1, quiet = T), end = 1)[1] ==
+        while (str_sub(scan(con, what = "", nlines = 1, quiet = TRUE), end = 1)[1] ==
             ",") {
             i <- i + 1
         }
@@ -74,7 +74,7 @@ read.acs <- function(filename, endyear = "auto", span = "auto", col.names = "aut
     get.colnames <- function(geocols, skip) {
         con <- make.con()
         open(con)
-        headers <- read.csv(con, nrows = skip + 1, header = F)  # add one to include 'header' row
+        headers <- read.csv(con, nrows = skip + 1, header = FALSE)  # add one to include 'header' row
         headers <- headers[, -geocols]
         headers <- apply(headers, FUN = "paste", MARGIN = 2, collapse = ".")
         headers <- headers[seq(1, length(headers), 2)]
@@ -89,7 +89,7 @@ read.acs <- function(filename, endyear = "auto", span = "auto", col.names = "aut
         con <- make.con()
         open(con)
         in.data <- read.csv(con, skip = skip, na.strings = c("-", "**", "***", "(X)",
-            "N"), stringsAsFactors = F)
+            "N"), stringsAsFactors = FALSE)
         # trick to get geocols to be first columns
         datacols <- 1:length(in.data)
         datacols <- datacols[-geocols]
@@ -115,7 +115,7 @@ read.acs <- function(filename, endyear = "auto", span = "auto", col.names = "aut
     acs.obj <- new(Class = "acs", endyear = endyear, span = span, geography = as.data.frame(in.data[,
         1:length(geocols)]), acs.colnames = acs.colnames, acs.units = acs.units,
         currency.year = endyear, standard.error = as.matrix(in.data[, seq((length(geocols) +
-            2), length(in.data), 2)]), modified = F, estimate = as.matrix(in.data[,
+            2), length(in.data), 2)]), modified = FALSE, estimate = as.matrix(in.data[,
             seq((length(geocols) + 1), length(in.data), 2)]))
 
     # convert 90% MOE into standard error, correct for 2005 flaw

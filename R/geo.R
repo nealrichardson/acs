@@ -42,7 +42,7 @@ if (!isGeneric("sumlev")) {
 setMethod("sumlev", "geo", function(object) object@sumlev)
 
 setClass(Class = "geo.set", representation = representation(geo.list = "list", combine = "logical",
-    combine.term = "character"), prototype(combine = T, combine.term = "aggregate"))
+    combine.term = "character"), prototype(combine = TRUE, combine.term = "aggregate"))
 is.geo.set <- function(object) {
     if (class(object) == "geo.set") {
         TRUE
@@ -130,11 +130,11 @@ flatten.geo.set <- function(x) {
     }
 }
 
-setMethod("c", signature(x = "geo.set"), function(x, y, ..., combine = F, combine.term = "aggregate",
+setMethod("c", signature(x = "geo.set"), function(x, y, ..., combine = FALSE, combine.term = "aggregate",
     recursive = FALSE) {
     if (recursive) {
         if (missing(y))
-            geo.set.obj <- x else geo.set.obj <- x + c(y, ..., recursive = T)
+            geo.set.obj <- x else geo.set.obj <- x + c(y, ..., recursive = TRUE)
         geo.set.obj@combine <- combine
         geo.set.obj@combine.term <- combine.term
     } else {

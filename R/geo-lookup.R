@@ -16,7 +16,7 @@ geo.lookup <- function(state, county, county.subdivision, place, american.indian
         }
         american.indian.area <- fips.american.indian.area[, 1]
         american.indian.area.name <- fips.american.indian.area[, 2]
-        results <- data.frame(american.indian.area, american.indian.area.name, stringsAsFactors = F)
+        results <- data.frame(american.indian.area, american.indian.area.name, stringsAsFactors = FALSE)
         return(results)
     }
     # all remaining need state
@@ -51,7 +51,7 @@ geo.lookup <- function(state, county, county.subdivision, place, american.indian
             school.district.secondary = school.district.secondary, school.district.unified = school.district.unified)
         return(rbind.fill(a, b))
     }
-    results <- data.frame(state = state, state.name = state.name, stringsAsFactors = F)
+    results <- data.frame(state = state, state.name = state.name, stringsAsFactors = FALSE)
     # check counties
     fips.county.sub <- fips.county.subdivision[fips.county.subdivision$STATEFP ==
         state, ]
@@ -69,7 +69,7 @@ geo.lookup <- function(state, county, county.subdivision, place, american.indian
         county.name <- fips.county[, 4]
         if (length(county) > 0) {
             results <- rbind.fill(results, data.frame(state, state.name, county,
-                county.name, stringsAsFactors = F))
+                county.name, stringsAsFactors = FALSE))
         }
     }
     # check subdivisions, when no county given; state still required
@@ -88,7 +88,7 @@ geo.lookup <- function(state, county, county.subdivision, place, american.indian
         if (length(county.subdivision) > 0) {
             results <- rbind.fill(results, data.frame(state, state.name, county = this.county,
                 county.name = this.county.name, county.subdivision, county.subdivision.name = subdivision.name,
-                stringsAsFactors = F))
+                stringsAsFactors = FALSE))
         }
     }
     # check subdivisions, when county is given
@@ -108,7 +108,7 @@ geo.lookup <- function(state, county, county.subdivision, place, american.indian
         if (length(county.subdivision) > 0) {
             results <- rbind.fill(results, data.frame(state, state.name, county = this.county,
                 county.name = this.county.name, county.subdivision, county.subdivision.name = subdivision.name,
-                stringsAsFactors = F))
+                stringsAsFactors = FALSE))
         }
     }
     # check place
@@ -123,7 +123,7 @@ geo.lookup <- function(state, county, county.subdivision, place, american.indian
         this.county.name <- fips.place[, 7]
         if (length(place) > 0) {
             results <- rbind.fill(results, data.frame(state, state.name, county.name = this.county.name,
-                place, place.name, stringsAsFactors = F))
+                place, place.name, stringsAsFactors = FALSE))
         }
     }
     # check schools elementary
@@ -141,7 +141,7 @@ geo.lookup <- function(state, county, county.subdivision, place, american.indian
         if (length(school.district.elementary) > 0) {
             results <- rbind.fill(results, data.frame(state, state.name, school.district.elementary,
                 school.district.elementary.name, school.district.elementary.type,
-                stringsAsFactors = F))
+                stringsAsFactors = FALSE))
         }
     }
     ## secondary
@@ -158,7 +158,7 @@ geo.lookup <- function(state, county, county.subdivision, place, american.indian
         school.district.secondary.type <- fips.school.secondary[, 5]  # type (elem, secondary, unified)
         if (length(school.district.secondary) > 0) {
             results <- rbind.fill(results, data.frame(state, state.name, school.district.secondary,
-                school.district.secondary.name, school.district.secondary.type, stringsAsFactors = F))
+                school.district.secondary.name, school.district.secondary.type, stringsAsFactors = FALSE))
         }
     }
     ## unified
@@ -175,7 +175,7 @@ geo.lookup <- function(state, county, county.subdivision, place, american.indian
         school.district.unified.type <- fips.school.unified[, 5]  # type (elem, secondary, unified)
         if (length(school.district.unified) > 0) {
             results <- rbind.fill(results, data.frame(state, state.name, school.district.unified,
-                school.district.unified.name, school.district.unified.type, stringsAsFactors = F))
+                school.district.unified.name, school.district.unified.type, stringsAsFactors = FALSE))
         }
     }
     ## any type
@@ -191,7 +191,7 @@ geo.lookup <- function(state, county, county.subdivision, place, american.indian
         school.district.type <- fips.school.any[, 5]  # type (elem, secondary, unified)
         if (length(school.district) > 0) {
             results <- rbind.fill(results, data.frame(state, state.name, school.district,
-                school.district.name, school.district.type, stringsAsFactors = F))
+                school.district.name, school.district.type, stringsAsFactors = FALSE))
         }
     }
     results

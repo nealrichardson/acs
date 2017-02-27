@@ -1,7 +1,7 @@
 geo.make <- function(us, region, division, state, county, county.subdivision, place,
     tract, block.group, msa, csa, necta, urban.area, congressional.district, state.legislative.district.upper,
     state.legislative.district.lower, puma, zip.code, american.indian.area, school.district.elementary,
-    school.district.secondary, school.district.unified, combine = F, combine.term = "aggregate",
+    school.district.secondary, school.district.unified, combine = FALSE, combine.term = "aggregate",
     check = FALSE, key = "auto") {
     .geo.unit.make <- function(us, region, division, state, county, county.subdivision,
         place, tract, block.group, msa, csa, necta, urban.area, congressional.district,
@@ -401,7 +401,7 @@ geo.make <- function(us, region, division, state, county, county.subdivision, pl
             cat(paste("Testing geography item ", i, ": ", name(geo.list(geo.set.obj[i])),
                 " .... ", sep = ""))
             obj.test <- acs.fetch(endyear = 2010, geography = geo.set.obj[i], key = key,
-                variable = "B01001_001", lookup = F)
+                variable = "B01001_001", lookup = FALSE)
             cat("OK.\n")
         }
     }

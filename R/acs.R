@@ -72,7 +72,7 @@ globalVariables(c("fips.state", "fips.school", "fips.county.subdivision",
 
 .acs.identify.units <- function(acs.colnames) {
     acs.units <- rep("count", length(acs.colnames))
-    dollar.index <- grep(pattern = "dollars", x = acs.colnames, fixed = T)
+    dollar.index <- grep(pattern = "dollars", x = acs.colnames, fixed = TRUE)
     acs.units[dollar.index] <- "dollars"
     factor(acs.units, levels = .acs.unit.levels)
 }
@@ -100,7 +100,7 @@ globalVariables(c("fips.state", "fips.school", "fips.county.subdivision",
 
 acs.tables.install <- function() {
     filelist <- readLines("http://web.mit.edu/eglenn/www/acs/acs-variables/filelist.txt")
-    dir.create(paste(system.file(package = "acs"), "extdata", sep = "/"), showWarnings = F)
+    dir.create(paste(system.file(package = "acs"), "extdata", sep = "/"), showWarnings = FALSE)
     for (i in filelist) {
         download.file(url = paste("http://web.mit.edu/eglenn/www/acs/acs-variables/",
             i, sep = ""), destfile = paste(system.file("extdata/", package = "acs"),
@@ -112,7 +112,7 @@ setClass(Class = "acs", representation = representation(endyear = "integer", spa
     geography = "data.frame", acs.colnames = "character", modified = "logical", acs.units = "factor",
     currency.year = "integer", estimate = "matrix", standard.error = "matrix"), prototype(endyear = NA_integer_,
     span = NA_integer_, acs.units = factor(levels = .acs.unit.levels), currency.year = NA_integer_,
-    modified = F))
+    modified = FALSE))
 
 is.acs <- function (object) class(object) == "acs"
 
@@ -147,15 +147,15 @@ setReplaceMethod("[", "acs", function (x, i, j, value) {
     if (is.acs(value) && all(dim(value) == c(length(i), length(j)))) {
         if (endyear(x) != endyear(value)) {
             warning("original and replacement do not have same endyear;\nkeeping original value",
-                call. = F)
+                call. = FALSE)
         }
         if (span(x) != span(value)) {
             warning("original and replacement do not have same span;\nkeeping original value",
-                call. = F)
+                call. = FALSE)
         }
         if (currency.year(x) != currency.year(value)) {
             warning("original and replacement do not have same currency.year;\nkeeping original value",
-                call. = F)
+                call. = FALSE)
         }
         x@estimate[i, j] <- value@estimate
         x@standard.error[i, j] <- value@standard.error
@@ -165,10 +165,10 @@ setReplaceMethod("[", "acs", function (x, i, j, value) {
             if (dim(x)[2] <= length(j)) {
                 x@geography[i, ] <- geography(value)  # change all geo
                 warning("geographies do not match but all columns changed;\nusing new geographies",
-                  call. = F)
+                  call. = FALSE)
             } else {
                 warning("geographies do not match but some columns retained;\nkeeping original geography values",
-                  call. = F)
+                  call. = FALSE)
             }
         }
         if (!all(acs.colnames(x[i, j]) == acs.colnames(value))) {
@@ -176,10 +176,10 @@ setReplaceMethod("[", "acs", function (x, i, j, value) {
             if (dim(x)[1] <= length(i)) {
                 x@acs.colnames[j] <- acs.colnames(value)
                 warning("acs.colnames do not match but all rows changes;\nusing new acs.colnames",
-                  call. = F)
+                  call. = FALSE)
             } else {
                 warning("acs.colnames do not match but some rows retained;\nkeeping original acs.colnames",
-                  call. = F)
+                  call. = FALSE)
             }
         }
         # is value two item list?
@@ -195,7 +195,7 @@ setReplaceMethod("[", "acs", function (x, i, j, value) {
         x@standard.error[i, j] <- 0
     } else {
         stop("incompatible objects or dimensions;\nunable to parse for replacement",
-            call. = F)
+            call. = FALSE)
     }
     x@modified <- T
     x <- .acs.dimnames(x)  # in case geography or acs.colnames changed
@@ -215,7 +215,7 @@ cbind.acs <- function(e1, e2) {
     }
     NEW.ESTIMATE <- cbind(estimate(e1), estimate(e2))
     NEW.ERROR <- cbind(standard.error(e1), standard.error(e2))
-    acs.obj <- new(Class = "acs", endyear = endyear(e1), span = span(e1), modified = T,
+    acs.obj <- new(Class = "acs", endyear = endyear(e1), span = span(e1), modified = TRUE,
         geography = GEOGRAPHY, acs.units = factor(c(acs.units(e1), acs.units(e2)),
             levels = .acs.unit.levels), currency.year = currency.year(e1), acs.colnames = c(acs.colnames(e1),
             acs.colnames(e2)), estimate = NEW.ESTIMATE, standard.error = NEW.ERROR)
@@ -236,7 +236,7 @@ rbind.acs <- function(e1, e2) {
     GEOGRAPHY <- rbind.fill(geography(e1), geography(e2))
     NEW.ESTIMATE <- rbind(estimate(e1), estimate(e2))
     NEW.ERROR <- rbind(standard.error(e1), standard.error(e2))
-    acs.obj <- new(Class = "acs", endyear = endyear(e1), span = span(e1), modified = T,
+    acs.obj <- new(Class = "acs", endyear = endyear(e1), span = span(e1), modified = TRUE,
         geography = GEOGRAPHY, acs.units = acs.units(e1), currency.year = currency.year(e1),
         acs.colnames = acs.colnames(e1), estimate = NEW.ESTIMATE, standard.error = NEW.ERROR)
     acs.obj <- .acs.dimnames(acs.obj)
@@ -247,7 +247,7 @@ setMethod("+", signature(e1 = "acs", e2 = "acs"), function(e1, e2) {
     header <- .acs.combine.headers(e1, e2, "+")
     NEW.ESTIMATE <- estimate(e1) + estimate(e2)
     NEW.ERROR <- sqrt(standard.error(e1)^2 + standard.error(e2)^2)
-    acs.obj <- new(Class = "acs", endyear = header$endyear, span = header$span, modified = T,
+    acs.obj <- new(Class = "acs", endyear = header$endyear, span = header$span, modified = TRUE,
         geography = header$geography, acs.units = header$acs.units, currency.year = header$currency.year,
         acs.colnames = header$acs.colnames, estimate = NEW.ESTIMATE, standard.error = NEW.ERROR)
     acs.obj <- .acs.dimnames(acs.obj)
@@ -258,14 +258,14 @@ setMethod("-", signature(e1 = "acs", e2 = "acs"), function(e1, e2) {
     header <- .acs.combine.headers(e1, e2, "-")
     NEW.ESTIMATE <- estimate(e1) - estimate(e2)
     NEW.ERROR <- sqrt(standard.error(e1)^2 + standard.error(e2)^2)
-    acs.obj <- new(Class = "acs", endyear = header$endyear, span = header$span, modified = T,
+    acs.obj <- new(Class = "acs", endyear = header$endyear, span = header$span, modified = TRUE,
         geography = header$geography, acs.units = header$acs.units, currency.year = header$currency.year,
         acs.colnames = header$acs.colnames, estimate = NEW.ESTIMATE, standard.error = NEW.ERROR)
     acs.obj <- .acs.dimnames(acs.obj)
     acs.obj
 })
 
-.acs.divider <- function(num, den, proportion, verbose = F, output = "result") {
+.acs.divider <- function(num, den, proportion, verbose = FALSE, output = "result") {
     if (proportion == T)
         header <- .acs.combine.headers(num, den, "/") else header <- .acs.combine.headers(num, den, ":")
     p <- estimate(num)/estimate(den)
@@ -308,7 +308,7 @@ setMethod("-", signature(e1 = "acs", e2 = "acs"), function(e1, e2) {
         rownames(ratio.report) <- header$geography[[1]]
         ratio.report[, ] <- "ratio"
     }
-    acs.obj <- new(Class = "acs", endyear = header$endyear, span = header$span, modified = T,
+    acs.obj <- new(Class = "acs", endyear = header$endyear, span = header$span, modified = TRUE,
         geography = header$geography, acs.units = header$acs.units, currency.year = header$currency.year,
         acs.colnames = header$acs.colnames, estimate = p, standard.error = NEW.ERROR)
     acs.obj <- .acs.dimnames(acs.obj)
@@ -327,15 +327,15 @@ setMethod("/", signature(e1 = "acs", e2 = "acs"), function(e1, e2) {
     dividing, which does not assume that numerator is a subset of
     denominator; for more precise results when seeking a proportion
     and not a ratio, use divide.acs(..., method=\"proportion\") **")
-    .acs.divider(num = e1, den = e2, proportion = F, verbose = F)
+    .acs.divider(num = e1, den = e2, proportion = FALSE, verbose = FALSE)
 })
 
-divide.acs <- function(numerator, denominator, method = "ratio", verbose = T, output = "result") {
+divide.acs <- function(numerator, denominator, method = "ratio", verbose = TRUE, output = "result") {
     if (identical(method, "ratio")) {
-        .acs.divider(num = numerator, den = denominator, proportion = F, verbose = verbose,
+        .acs.divider(num = numerator, den = denominator, proportion = FALSE, verbose = verbose,
             output = output)
     } else if (identical(method, "proportion")) {
-        .acs.divider(num = numerator, den = denominator, proportion = T, verbose = verbose,
+        .acs.divider(num = numerator, den = denominator, proportion = TRUE, verbose = verbose,
             output = output)
     } else {
         warning("Error: must set method to \"ratio\" or \"proportion\"")
@@ -348,7 +348,7 @@ setMethod("*", signature(e1 = "acs", e2 = "acs"), function(e1, e2) {
     NEW.ESTIMATE <- estimate(e1) * estimate(e2)
     NEW.ERROR <- sqrt((estimate(e1)^2 * standard.error(e2)^2) + (estimate(e2)^2 *
         standard.error(e1)^2))
-    acs.obj <- new(Class = "acs", endyear = header$endyear, span = header$span, modified = T,
+    acs.obj <- new(Class = "acs", endyear = header$endyear, span = header$span, modified = TRUE,
         geography = header$geography, acs.units = header$acs.units, currency.year = header$currency.year,
         acs.colnames = header$acs.colnames, estimate = NEW.ESTIMATE, standard.error = NEW.ERROR)
     acs.obj <- .acs.dimnames(acs.obj)
@@ -490,7 +490,7 @@ setMethod("sum", signature(x = "acs"), function(x, agg.term = c("aggregate", "ag
     }
     ESTIMATE <- as.matrix(sum(est))
     ERROR <- as.matrix(sqrt(sum(err^2)))
-    acs.obj <- new(Class = "acs", endyear = endyear(x), span = span(x), modified = T,
+    acs.obj <- new(Class = "acs", endyear = endyear(x), span = span(x), modified = TRUE,
         geography = geography, acs.units = acs.units, currency.year = currency.year(x),
         acs.colnames = acs.colnames, estimate = ESTIMATE, standard.error = ERROR)
     acs.obj <- .acs.dimnames(acs.obj)
@@ -555,7 +555,7 @@ setReplaceMethod(f = "endyear", signature = "acs", definition = function(object,
     warning(paste("Changing value of endyear from ", endyear(object), " to ", value,
         ".\nThis is an unusual thing to do, unless the original value was incorrect.\nAlso changing value of currency.year to",
         value, ", without converting currency values.\nPlease see ?endyear and ?currency.year for more information",
-        sep = ""), call. = F)
+        sep = ""), call. = FALSE)
     object@endyear <- as.integer(value)
     object@currency.year <- as.integer(value)
     object@modified <- T
@@ -567,7 +567,7 @@ setReplaceMethod(f = "span", signature = "acs", definition = function(x, value) 
     warning(paste("Changing value of span from ", span(x), " to ", value, ".\nThis is an unusual
                          thing to do, unless the original value was
                          incorrect.\nSee ?acs for more information",
-        sep = ""), call. = F)
+        sep = ""), call. = FALSE)
     x@span <- as.integer(value)
     x@modified <- T
     validObject(x)
@@ -586,7 +586,7 @@ setReplaceMethod(f = "currency.year", signature = "acs", definition = function(o
     currency.convert(object, rate = "auto", newyear = value)
 })
 
-currency.convert <- function(object, rate = "auto", newyear = NA_integer_, verbose = F) {
+currency.convert <- function(object, rate = "auto", newyear = NA_integer_, verbose = FALSE) {
     if (rate == "auto") {
         .env <- environment()
         data("cpi", envir = .env)
@@ -610,7 +610,7 @@ currency.convert <- function(object, rate = "auto", newyear = NA_integer_, verbo
         }
         output <- c(output, "Converting the following columns:", "\n", paste(acs.colnames(object)[dollar.cols],
             "\n", sep = ""))
-        warning(output, call. = F)
+        warning(output, call. = FALSE)
     }
     for (i in dollar.cols) {
         object@estimate[, i] <- object@estimate[, i] * rate

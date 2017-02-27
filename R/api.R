@@ -22,7 +22,7 @@ api.url.maker <- function(endyear, span, key, variables, dataset, geo.call) {
 # package extdata directory
 
 api.key.install <- function(key, file = "key.rda") {
-    dir.create(paste(system.file(package = "acs"), "extdata", sep = "/"), showWarnings = F)
+    dir.create(paste(system.file(package = "acs"), "extdata", sep = "/"), showWarnings = FALSE)
     save(key, file = paste(system.file("extdata", package = "acs"), file, sep = "/"))
 }
 
@@ -32,9 +32,9 @@ api.key.install <- function(key, file = "key.rda") {
 api.key.migrate <- function() {
     key.path <- system.file("../key-holder.rda", package = "acs")
     if (file.exists(key.path)) {
-        dir.create(paste(system.file(package = "acs"), "extdata", sep = "/"), showWarnings = F)
+        dir.create(paste(system.file(package = "acs"), "extdata", sep = "/"), showWarnings = FALSE)
         file.copy(from = key.path, to = paste(system.file("extdata", package = "acs"),
-            "key.rda", sep = "/"), overwrite = T)
+            "key.rda", sep = "/"), overwrite = TRUE)
     } else {
         warning("No archived key found;\n  try api.key.install with new key.")
     }
