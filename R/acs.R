@@ -197,7 +197,7 @@ setReplaceMethod("[", "acs", function (x, i, j, value) {
         stop("incompatible objects or dimensions;\nunable to parse for replacement",
             call. = FALSE)
     }
-    x@modified <- T
+    x@modified <- TRUE
     x <- .acs.dimnames(x)  # in case geography or acs.colnames changed
     validObject(x)
     return(x)
@@ -536,7 +536,7 @@ setReplaceMethod(f = "acs.colnames", signature = "acs", definition = function(x,
     value) {
     x@acs.colnames <- value
     x <- .acs.dimnames(x)
-    x@modified <- T
+    x@modified <- TRUE
     validObject(x)
     return(x)
 })
@@ -545,7 +545,7 @@ setReplaceMethod(f = "geography", signature = "acs", definition = function(objec
     value) {
     object@geography <- value
     object <- .acs.dimnames(object)
-    object@modified <- T
+    object@modified <- TRUE
     validObject(object)
     return(object)
 })
@@ -558,7 +558,7 @@ setReplaceMethod(f = "endyear", signature = "acs", definition = function(object,
         sep = ""), call. = FALSE)
     object@endyear <- as.integer(value)
     object@currency.year <- as.integer(value)
-    object@modified <- T
+    object@modified <- TRUE
     validObject(object)
     return(object)
 })
@@ -569,14 +569,14 @@ setReplaceMethod(f = "span", signature = "acs", definition = function(x, value) 
                          incorrect.\nSee ?acs for more information",
         sep = ""), call. = FALSE)
     x@span <- as.integer(value)
-    x@modified <- T
+    x@modified <- TRUE
     validObject(x)
     return(x)
 })
 
 setReplaceMethod(f = "acs.units", signature = "acs", definition = function(x, value) {
     x@acs.units <- factor(value, levels = .acs.unit.levels)
-    x@modified <- T
+    x@modified <- TRUE
     validObject(x)
     return(x)
 })
@@ -617,7 +617,7 @@ currency.convert <- function(object, rate = "auto", newyear = NA_integer_, verbo
         object@standard.error[, i] <- object@standard.error[, i] * rate
     }
     object@currency.year <- as.integer(newyear)
-    object@modified <- T
+    object@modified <- TRUE
     validObject(object)
     return(object)
 }

@@ -1,13 +1,7 @@
 setClass(Class = "geo", representation = representation(api.for = "list", api.in = "list",
     name = "character", sumlev = "numeric"), prototype())
 
-is.geo <- function(object) {
-    if (class(object) == "geo") {
-        TRUE
-    } else {
-        FALSE
-    }
-}
+is.geo <- function (object) class(object) == "geo"
 
 if (!isGeneric("api.for")) {
     setGeneric("api.for", def = function(object) {
@@ -104,7 +98,7 @@ setMethod("+", signature(e1 = "geo", e2 = "geo.set"), function(e1, e2) {
 setMethod("+", signature(e1 = "geo.set", e2 = "geo.set"), function(e1, e2) {
     if (is.geo(geo.list(e2)))
         combine <- combine(e1) else if (is.geo(geo.list(e1)))
-        combine <- combine(e2) else combine <- F
+        combine <- combine(e2) else combine <- FALSE
     geo.set.obj <- flatten.geo.set(c(e1, e2))
     combine(geo.set.obj) <- combine
     combine.term(geo.set.obj) <- paste(combine.term(e1), " + ", combine.term(e2))

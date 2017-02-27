@@ -4,8 +4,6 @@ setClass(Class = "acs.lookup", representation = representation(endyear = "numeri
 setMethod("endyear", "acs.lookup", function(object) object@endyear)
 setMethod("span", "acs.lookup", function(object) object@span)
 setMethod("results", "acs.lookup", function(object) object@results)
-# could add other slots, plus 'show' method
-
 setMethod("show", "acs.lookup", function(object) {
     cat("An object of class \"acs.lookup\"\n")
     cat("endyear=", endyear(object), " ; span=", span(object), "\n\n")
@@ -14,14 +12,7 @@ setMethod("show", "acs.lookup", function(object) {
     cat("\n")
 })
 
-
-is.acs.lookup <- function(object) {
-    if (class(object) == "acs.lookup") {
-        TRUE
-    } else {
-        FALSE
-    }
-}
+is.acs.lookup <- function (object) class(object) == "acs.lookup"
 
 setMethod("+", signature(e1 = "acs.lookup", e2 = "acs.lookup"), function(e1, e2) {
     e3 <- rbind(e1@results, e2@results)
@@ -73,7 +64,7 @@ acs.lookup <- function(endyear, span = 5, dataset = "acs", keyword, table.name, 
         if (!missing(keyword))
             keyword <- tolower(keyword)
     } else {
-        insensitive <- F
+        insensitive <- FALSE
     }
     # find correct XML variables new way / updated for v2.0 doc.string is xml file
     # name when saved locally or on eglenn archive doc.url is path to census file for
