@@ -1,0 +1,9 @@
+*.Rcheck/
+*.orig
+acs*.tar.gz
+.DS_Store
+Rd2.pdf
+inst/doc/*.html
+*.log
+.Rproj.user
+*.Rproj

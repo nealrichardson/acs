@@ -1,0 +1,10 @@
+^Rd2\.pdf$
+^Makefile$
+^vignette-data$
+^.*\.tar\.gz$
+^.*\.Rcheck$
+^\.travis\.yml$
+^appveyor.yml$
+^.*\.log$
+^.*\.Rproj$
+^\.Rproj\.user$

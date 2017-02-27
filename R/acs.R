@@ -20,31 +20,31 @@
 # .acs.unit.levels
     #
     # includes all valid types of units for acs estimates
-    
+
     .acs.unit.levels=c("count","dollars","proportion", "ratio", "other")
-    
-    
+
+
     # .acs.dimnames()
     #
     # ensures that a returned acs object includes proper row (geography)
     # and column (col.names) labels
-    
+
     .acs.dimnames=function(acs.obj){
       dimnames(acs.obj@estimate)=list(acs.obj@geography[[1]],acs.obj@acs.colnames)
       dimnames(acs.obj@standard.error)=list(acs.obj@geography[[1]],acs.obj@acs.colnames)
       acs.obj}
-    
+
     # .acs.combine.headers()
-    # 
+    #
     # create metadata and row/column names for operations that merge two
     # acs units into one
-    
+
     .acs.combine.headers=function(e1, e2, operator) {
-      if (endyear(e1)==endyear(e2)) 
+      if (endyear(e1)==endyear(e2))
         ENDYEAR=endyear(e1)
       else
         ENDYEAR=NA_integer_
-      if (currency.year(e1)==currency.year(e2)) 
+      if (currency.year(e1)==currency.year(e2))
         CURRENCY.YEAR=currency.year(e1)
       else
         CURRENCY.YEAR=NA_integer_
@@ -71,14 +71,14 @@
         acs.colnames=ACS.COLNAMES, acs.units=ACS.UNITS)
       header
     }
-    
-    
+
+
     # .acs.identify.units()
-    # 
+    #
     # used to set units in acs object; initially assumes all units are
     # "counts", then changes some to "dollars" is the word "dollars"
     # matches in colnames.
-    
+
     .acs.identify.units=function(acs.colnames)
     {
       acs.units=rep("count", length(acs.colnames))
@@ -86,14 +86,14 @@
       acs.units[dollar.index]="dollars"
       factor(acs.units, levels=.acs.unit.levels)
     }
-    
-    
+
+
     # .acs.make.constant.object()
-    # 
+    #
     # use this to create an acs object with some constant value in the
     # estimate and 0 for all the standard errors -- helpful, for example,
     # to add a certain number to every value.
-    
+
     .acs.make.constant.object=function(value, template){
       acs.obj=template
     # if given a vector, replaces by row, not by column
@@ -138,7 +138,7 @@ api.key.migrate=function() {
       file.copy(from=key.path, to=paste(system.file("extdata", package="acs"), "key.rda", sep="/"), overwrite=T)
   } else {warning("No archived key found;\n  try api.key.install with new key.")}
 }
- 
+
 
 # a function to download XML variable lookup files,
 # to speed up future acs.lookup calls.
@@ -157,7 +157,7 @@ setClass(Class="acs", representation =
   standard.error="matrix"), prototype(endyear=NA_integer_,
   span=NA_integer_, acs.units=factor(levels=.acs.unit.levels),
   currency.year=NA_integer_, modified=F))
-  
+
 is.acs=function(object){
   if (class(object)=="acs") {TRUE}
   else{FALSE}}
@@ -167,27 +167,27 @@ globalVariables(c("fips.state","fips.school","fips.county.subdivision", "fips.am
 
   setClass(Class="geo", representation =
     representation(api.for="list", api.in="list", name="character", sumlev="numeric"), prototype())
-  
+
   is.geo=function(object){
     if (class(object)=="geo") {TRUE}
     else{FALSE}}
-  
+
   if (!isGeneric("api.for")) {
     setGeneric("api.for", def=function(object){standardGeneric("api.for")})}else{}
   setMethod("api.for", "geo", function(object) object@api.for)
-  
+
   if (!isGeneric("api.in")) {
     setGeneric("api.in", def=function(object){standardGeneric("api.in")})}else{}
   setMethod("api.in", "geo", function(object) object@api.in)
-  
+
   if (!isGeneric("name")) {
     setGeneric("name", def=function(object){standardGeneric("name")})}else{}
   setMethod("name", "geo", function(object) object@name)
-  
+
   if (!isGeneric("sumlev")) {
     setGeneric("sumlev", def=function(object){standardGeneric("sumlev")})}else{}
   setMethod("sumlev", "geo", function(object) object@sumlev)
-  
+
   setClass(Class="geo.set", representation =
            representation(geo.list="list", combine="logical", combine.term="character"),
            prototype(combine=T, combine.term="aggregate"))
@@ -202,27 +202,17 @@ globalVariables(c("fips.state","fips.school","fips.county.subdivision", "fips.am
   setMethod("combine.term", "geo.set", function(object) object@combine.term)
   if (!isGeneric("geo.list")) {
     setGeneric("geo.list", def=function(object){standardGeneric("geo.list")})}else{}
-  
+
   setMethod("geo.list", "geo.set", function(object) {
     if(length(object@geo.list)==1) object@geo.list[[1]]
     else object@geo.list})
-  
+
   setMethod("show", signature(object = "geo"), function(object) {
     cat("\"geo\" object: ")
     print(object@name)
   })
-    
-  # setMethod("show", signature(object = "geo.set"), function(object) {
-  #   cat("An object of class \"geo.list\"\n\n")
-  #   cat("Slot \"geo.list\":\n")
-  #   print(lapply(X=object@geo.list, FUN=name))
-  #   cat("Slot \"combine\":\n")
-  #   print(object@combine)
-  #   cat("Slot \"combine.term\":\n")
-  #   print(object@combine.term)
-  # })
-    
-    
+
+
   # method to combine geos and geo.sets
   setMethod("+", signature(e1 = "geo", e2 = "geo"), function(e1, e2) {
     geo.set.obj=new(Class="geo.set",
@@ -242,13 +232,13 @@ globalVariables(c("fips.state","fips.school","fips.county.subdivision", "fips.am
       geo.list=c(e1, geo.list(e2)))
     geo.set.obj
   })
-  
+
   # Note on "+"
-  # if geo.list(e1), geo.list(e2) are geo.sets, then take the geolists of them, recusively; 
+  # if geo.list(e1), geo.list(e2) are geo.sets, then take the geolists of them, recusively;
   # should always yield flattend set.
-  
+
   setMethod("+", signature(e1 = "geo.set", e2 = "geo.set"), function(e1, e2) {
-    if(is.geo(geo.list(e2))) combine=combine(e1) else 
+    if(is.geo(geo.list(e2))) combine=combine(e1) else
     if(is.geo(geo.list(e1))) combine=combine(e2) else
     combine=F
     geo.set.obj=flatten.geo.set(c(e1,e2))
@@ -256,7 +246,7 @@ globalVariables(c("fips.state","fips.school","fips.county.subdivision", "fips.am
     combine.term(geo.set.obj)=paste(combine.term(e1), " + ", combine.term(e2))
     geo.set.obj
   })
-  
+
   flatten.geo.set=function(x) {
     if (!is.geo.set(x)) return(NA)
     if (length(x)==1){
@@ -272,7 +262,7 @@ globalVariables(c("fips.state","fips.school","fips.county.subdivision", "fips.am
     combine.term=combine.term(x), geo.list=c(geo.list(a), geo.list(b)))
     }
   }
-        
+
   setMethod("c", signature(x = "geo.set"), function(x, y, ..., combine=F, combine.term="aggregate", recursive = FALSE) {
     if (recursive) {
       if (missing(y)) geo.set.obj=x
@@ -284,17 +274,17 @@ globalVariables(c("fips.state","fips.school","fips.county.subdivision", "fips.am
         if (length(y)==1) {
           geo.set.obj=c((x+geo.list(y)),...)
           geo.set.obj@combine=combine
-          geo.set.obj@combine.term=combine.term        
+          geo.set.obj@combine.term=combine.term
         }
         else {
           geo.set.obj=new(Class="geo.set", combine=combine, combine.term=combine.term, geo.list=list(x,y, ...))}}
     }
     geo.set.obj
   })
-         
+
   # NOTE: changed this to prevent extra nesting when only one
   # geo.set is subsetted
-  
+
   setMethod(f="[", signature="geo.set", definition=function(x,i,j,...,drop=FALSE){
     if (missing(i)) i=j
     if (missing(j)) j=i
@@ -303,12 +293,12 @@ globalVariables(c("fips.state","fips.school","fips.county.subdivision", "fips.am
       new(Class="geo.set",
           geo.list=x@geo.list[i], combine=combine(x),
           combine.term=paste(combine.term(x), "(partial)", sep=" "))})
-  
+
   setMethod(f="[[", signature="geo.set", definition=function(x,i,j,...,drop=FALSE){
     if (missing(i)) i=j
     if (missing(j)) j=i
     x@geo.list[[i]]})
-  
+
   # need to work on to allow to change combine values -- seem to not like when you replace more than one
   setReplaceMethod(f="[", signature="geo.set",
     definition=function(x,i,j,value){
@@ -326,7 +316,7 @@ globalVariables(c("fips.state","fips.school","fips.county.subdivision", "fips.am
       return(x)
     }
   })
-  
+
   setReplaceMethod(f="[[", signature="geo.set",
     definition=function(x,i,j,value){
     if (missing(i)) i=j
@@ -334,34 +324,34 @@ globalVariables(c("fips.state","fips.school","fips.county.subdivision", "fips.am
     x@geo.list[i]=value
     validObject(x)
     return(x)})
-    
-  
+
+
   ##  for some reason, can't declare new generic for "length"
   # if (!isGeneric("length")) {
   #  setGeneric("length", def=function(x){standardGeneric("length")})}else{}
 
   setMethod("length", "geo.set", function(x) length(x@geo.list))
-  
+
   if (!isGeneric("combine<-")) {
             setGeneric("combine<-", def=function(object, value){standardGeneric("combine<-")})}else{}
-  
+
   setReplaceMethod(f="combine", signature="geo.set",
                            definition=function(object,value){
                              object@combine=value
                              validObject(object)
                              return(object)
                            })
-  
+
   if (!isGeneric("combine.term<-")) {
             setGeneric("combine.term<-", def=function(object, value){standardGeneric("combine.term<-")})}else{}
-  
+
   setReplaceMethod(f="combine.term", signature="geo.set",
                            definition=function(object,value){
                              object@combine.term=value
                              validObject(object)
                              return(object)
                            })
-  
+
   geo.lookup=function(state, county, county.subdivision, place, american.indian.area, school.district, school.district.elementary, school.district.secondary, school.district.unified) {
     # first deal with american indian areas -- only one with no state
     if (!missing(american.indian.area)) {
@@ -372,7 +362,7 @@ globalVariables(c("fips.state","fips.school","fips.county.subdivision", "fips.am
       else {
         fips.american.indian.area=fips.american.indian.area[fips.american.indian.area$American.Indian.Area.Code %in% american.indian.area]}
       american.indian.area=fips.american.indian.area[,1]
-      american.indian.area.name=fips.american.indian.area[,2]    
+      american.indian.area.name=fips.american.indian.area[,2]
       results=data.frame(american.indian.area, american.indian.area.name, stringsAsFactors=F)
       return(results)
     }
@@ -410,7 +400,7 @@ globalVariables(c("fips.state","fips.school","fips.county.subdivision", "fips.am
       }
       county=fips.county[,3]
       # need to fix for when county is numeric vector, here and below
-  #    else {county=county[county %in% fips.county$County.ANSI]} 
+  #    else {county=county[county %in% fips.county$County.ANSI]}
       county.name=fips.county[, 4]
       if(length(county)>0){
         results=rbind.fill(results, data.frame(state, state.name, county, county.name, stringsAsFactors=F))}}
@@ -441,7 +431,7 @@ globalVariables(c("fips.state","fips.school","fips.county.subdivision", "fips.am
         results=rbind.fill(results, data.frame(state, state.name, county=this.county, county.name=this.county.name, county.subdivision, county.subdivision.name=subdivision.name, stringsAsFactors=F))}}
     # check place
     if (!missing(place)){
-        fips.place=fips.place[fips.place$STATEFP==state,]    
+        fips.place=fips.place[fips.place$STATEFP==state,]
         if(is.character(place)) {
           fips.place=fips.place[grepl(paste(place, collapse="|"), fips.place$PLACENAME), ]}
         else fips.place=fips.place[fips.place$PLACEFP %in% place,]
@@ -453,7 +443,7 @@ globalVariables(c("fips.state","fips.school","fips.county.subdivision", "fips.am
     # check schools
     ## elementary
     if (!missing(school.district.elementary)){
-        fips.school.elementary=fips.school[fips.school$STATEFP==state & fips.school$TYPE=="Elementary",]    
+        fips.school.elementary=fips.school[fips.school$STATEFP==state & fips.school$TYPE=="Elementary",]
         if(is.character(school.district.elementary)) {
           fips.school.elementary=fips.school.elementary[grepl(paste(school.district.elementary, collapse="|"), fips.school.elementary$SDNAME), ]}
         else fips.school.elementary=fips.school.elementary[fips.school.elementary$LEA %in% school.district.elementary,]
@@ -464,7 +454,7 @@ globalVariables(c("fips.state","fips.school","fips.county.subdivision", "fips.am
           results=rbind.fill(results, data.frame(state, state.name, school.district.elementary, school.district.elementary.name, school.district.elementary.type, stringsAsFactors=F))}}
     ## secondary
     if (!missing(school.district.secondary)){
-        fips.school.secondary=fips.school[fips.school$STATEFP==state  & fips.school$TYPE=="Secondary",]    
+        fips.school.secondary=fips.school[fips.school$STATEFP==state  & fips.school$TYPE=="Secondary",]
         if(is.character(school.district.secondary)) {
           fips.school.secondary=fips.school.secondary[grepl(paste(school.district.secondary, collapse="|"), fips.school.secondary$SDNAME), ]}
         else fips.school.secondary=fips.school.secondary[fips.school.secondary$LEA %in% school.district.secondary,]
@@ -475,7 +465,7 @@ globalVariables(c("fips.state","fips.school","fips.county.subdivision", "fips.am
           results=rbind.fill(results, data.frame(state, state.name, school.district.secondary, school.district.secondary.name, school.district.secondary.type, stringsAsFactors=F))}}
     ## unified
     if (!missing(school.district.unified)){
-        fips.school.unified=fips.school[fips.school$STATEFP==state  & fips.school$TYPE=="Unified",]    
+        fips.school.unified=fips.school[fips.school$STATEFP==state  & fips.school$TYPE=="Unified",]
         if(is.character(school.district.unified)) {
           fips.school.unified=fips.school.unified[grepl(paste(school.district.unified, collapse="|"), fips.school.unified$SDNAME), ]}
         else fips.school.unified=fips.school.unified[fips.school.unified$LEA %in% school.district.unified,]
@@ -486,7 +476,7 @@ globalVariables(c("fips.state","fips.school","fips.county.subdivision", "fips.am
           results=rbind.fill(results, data.frame(state, state.name, school.district.unified, school.district.unified.name, school.district.unified.type, stringsAsFactors=F))}}
     ## any type
     if (!missing(school.district)){
-        fips.school.any=fips.school[fips.school$STATEFP==state,]    
+        fips.school.any=fips.school[fips.school$STATEFP==state,]
         if(is.character(school.district)) {
           fips.school.any=fips.school.any[grepl(paste(school.district, collapse="|"), fips.school.any$SDNAME), ]}
         else fips.school.any=fips.school.any[fips.school.any$LEA %in% school.district,]
@@ -497,8 +487,8 @@ globalVariables(c("fips.state","fips.school","fips.county.subdivision", "fips.am
           results=rbind.fill(results, data.frame(state, state.name, school.district, school.district.name, school.district.type, stringsAsFactors=F))}}
     results
   }
-  
-  
+
+
   geo.make=function(us, region, division, state, county, county.subdivision, place, tract,
     block.group, msa, csa, necta, urban.area, congressional.district, state.legislative.district.upper, state.legislative.district.lower, puma, zip.code, american.indian.area, school.district.elementary, school.district.secondary, school.district.unified, combine=F, combine.term="aggregate", check=FALSE, key="auto") {
     .geo.unit.make=function(us, region, division, state, county, county.subdivision, place, tract,
@@ -583,7 +573,7 @@ globalVariables(c("fips.state","fips.school","fips.county.subdivision", "fips.am
         geo.obj=new(Class="geo", api.for=list("zip+code+tabulation+area"=zip.code), api.in=list(), name=paste("Zip Code Tabulation Area ", zip.code, sep=""), sumlev=860)
         return(geo.obj)
       }
-      # all other geos need a valid state 
+      # all other geos need a valid state
       if(missing(state)) {
         warning("state required")
         return(NA)}
@@ -669,7 +659,7 @@ globalVariables(c("fips.state","fips.school","fips.county.subdivision", "fips.am
       if (state != "*") state.name=fips.state[fips.state$STATE==state,3] else state.name="All states"
       if (hasArg(county) && county !="*")
         county.name=fips.county[fips.county$County.ANSI==county & fips.county$State.ANSI==state, 4]
-      else county.name="All counties"  # later, not used unless hasArg(county) 
+      else county.name="All counties"  # later, not used unless hasArg(county)
       if (hasArg(place)  && place !="*") {
         place.name=fips.place[fips.place$PLACEFP==place &
           fips.place$STATEFP==state, 4]
@@ -689,7 +679,7 @@ globalVariables(c("fips.state","fips.school","fips.county.subdivision", "fips.am
       else school.district.unified.name="All unified school districts"  # later, not used unless hasArg(county)
       # done with looking up names and codes
       # sumlev 40 (state)
-      if (nargs==1 && hasArg(state)) 
+      if (nargs==1 && hasArg(state))
         geo.obj=new(Class="geo", api.for=list(state=state), api.in=list(), name=state.name, sumlev=40)
       # sumlev 50 (state-county)
       if (nargs==2 && hasArg(county))
@@ -793,7 +783,7 @@ setClass(Class="acs.lookup", representation =
       setGeneric("results", def=function(object){standardGeneric("results")})}else{}
     setMethod("results", "acs.lookup", function(object) object@results)
     # could add other slots, plus "show" method
-    
+
     setMethod("show", "acs.lookup", function(object) {
       cat("An object of class \"acs.lookup\"\n")
       cat("endyear=", endyear(object)," ; span=", span(object), "\n\n")
@@ -801,26 +791,26 @@ setClass(Class="acs.lookup", representation =
       print(results(object))
       cat("\n")
       })
-    
-    
+
+
     is.acs.lookup=function(object){
       if (class(object)=="acs.lookup") {TRUE}
       else {FALSE}}
-    
+
     setMethod("+", signature(e1 = "acs.lookup", e2 = "acs.lookup"), function(e1, e2) {
       e3=rbind(e1@results, e2@results)
       new(Class="acs.lookup", endyear=e1@endyear, args=list(e1@args, e2@args), span=e1@span, results=e3)})
-    
+
     setMethod("c", signature(x = "acs.lookup" ), function(x, y, ...,
          recursive = FALSE) {
       if(missing(y)) x
       else x + c(y, ...)})
-    
+
     setMethod(f="[", signature="acs.lookup", definition=function(x,i,j,...,drop=FALSE){
       if (missing(i)) i=j
       if (missing(j)) j=i
       new(Class="acs.lookup", endyear=x@endyear, args=x@args, span=x@span, results=x@results[i,])})
-    
+
     acs.lookup=function(endyear, span=5, dataset="acs", keyword, table.name, table.number, case.sensitive=T) {
       arglist=as.list(environment())
       if (!missing(table.number)){
@@ -865,7 +855,7 @@ setClass(Class="acs.lookup", representation =
       else if(url.exists(paste("http://web.mit.edu/eglenn/www/acs/acs-variables/", doc.string, sep="")))
       {
           # since only here is issues, give some advice
-          warning(paste("XML variable lookup tables for this request\n  seem to be missing from '", doc.url, "';\n  temporarily downloading and using archived copies instead;\n  since this is *much* slower, recommend running\n  acs.tables.install()"), sep="")  
+          warning(paste("XML variable lookup tables for this request\n  seem to be missing from '", doc.url, "';\n  temporarily downloading and using archived copies instead;\n  since this is *much* slower, recommend running\n  acs.tables.install()"), sep="")
           doc.download=tempfile()
           download.file(url=paste("http://web.mit.edu/eglenn/www/acs/acs-variables/", doc.string, sep=""), destfile=doc.download)
           doc=xmlInternalTreeParse(doc.download)
@@ -876,7 +866,7 @@ setClass(Class="acs.lookup", representation =
          warning("As of the date of this version of the acs package\n  no variable lookup tables were available\n  for this dataset/endyear/span combination;\n  perhaps try a different combination...?\n  Returning NA;")
         return(NA)
       }
-      
+
       if (!missing(keyword)){
           if (!case.sensitive) {str.a="contains(translate(@label, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'),'"}
         else {str.a="contains(@label, '"}
@@ -911,8 +901,8 @@ setClass(Class="acs.lookup", representation =
       names=names[my.index]  # added for 2012, since data not sorted
       names=gsub("E$", "", names) # remove "E" from variable name
       if(dataset=="acs" && length(names)>0) {names=names[seq(1,length(names),2)]} # only want every other
-    
-# get table names 
+
+# get table names
       table.names=suppressWarnings(xpathSApply(doc, STRING, namespaces="ns", xmlGetAttr, "concept"))
       table.names=gsub("!!!!"," ",table.names)
       table.names=gsub("!!"," ",table.names)
@@ -922,35 +912,35 @@ setClass(Class="acs.lookup", representation =
         table.numbers=gsub(x=table.numbers, pattern="0$", replacement="")
         table.numbers=gsub(x=table.numbers, pattern="$", replacement=".")
       }
-      table.names=gsub(x=table.names, pattern="^.*\\.  ", replacement="") # remove table numbers from names 
-      table.names=gsub(x=table.names, pattern="* \\[.*\\]$", replacement="") # remove bracketed variable counts from SF1/SF3 tables 
+      table.names=gsub(x=table.names, pattern="^.*\\.  ", replacement="") # remove table numbers from names
+      table.names=gsub(x=table.names, pattern="* \\[.*\\]$", replacement="") # remove bracketed variable counts from SF1/SF3 tables
       table.names=table.names[my.index] # added for 2012, since data not sorted
       if(dataset=="acs" && length(table.names)>0) {table.names=table.names[seq(1,length(table.names),2)]} # only want every other
-      
+
 # get table numbers
       table.numbers=substr(table.numbers, 1, unlist(lapply(table.numbers, nchar))-1) # remove trailing period
       if(dataset=="acs"){  # sf1/sf3 table.numbers have already been reordered!
         table.numbers=table.numbers[my.index]
       } # added for 2012, since data not sorted
       if(dataset=="acs" && length(table.numbers)>0) {table.numbers=table.numbers[seq(1,length(table.numbers),2)]} # only want every other
-    
+
 # get variable names
       values=suppressWarnings(xpathSApply(doc, STRING, namespaces="ns", xmlGetAttr, "label"))
       values=gsub("!!!!"," ",values)
       values=gsub("!!"," ",values)
-      values=gsub(x=values, pattern="*\\[.*\\]", replacement=":") # remove bracketed variable counts from SF1/SF3 tables 
+      values=gsub(x=values, pattern="*\\[.*\\]", replacement=":") # remove bracketed variable counts from SF1/SF3 tables
       values=values[my.index] # added for 2012, since data not sorted
       if(dataset=="acs"  && length(values)>0) {values=values[seq(1,length(values),2)]} # only want every other
-    
+
       if (length(names)==0){
         warning("Sorry, no tables/keyword meets your search.\n  Suggestions:\n    try with 'case.sensitive=F',\n    remove search terms,\n    change 'keyword' to 'table.name' in search (or vice-versa)")
         return(NA)}
       free(doc)
       rm(doc)
       gc()
-      new(Class="acs.lookup", endyear=endyear, span=span, args=arglist, 
-            results=data.frame(variable.code=names, 
-            table.number=table.numbers, table.name=table.names, variable.name=values, 
+      new(Class="acs.lookup", endyear=endyear, span=span, args=arglist,
+            results=data.frame(variable.code=names,
+            table.number=table.numbers, table.name=table.names, variable.name=values,
             stringsAsFactors=F))
     }
 
@@ -959,7 +949,7 @@ read.acs=function(filename, endyear="auto", span="auto",
   {
                                         # Attempt to automatically determine endyear from filename if
                                         # necessary.
-    
+
     if (endyear=="auto")
       { # try to guess end year from filename
         endyear=2000+as.integer(str_extract(str_extract(filename, "ACS_[0-9][0-9]_"), "[0-9][0-9]"))
@@ -974,7 +964,7 @@ read.acs=function(filename, endyear="auto", span="auto",
       }
                                         # Attempt to automatically determine span from filename if
                                         # necessary.
-  
+
     if (span=="auto")
       {
         span=as.integer(str_extract(str_extract(filename, "_[0-9]YR"), "[0-9]"))
@@ -989,7 +979,7 @@ read.acs=function(filename, endyear="auto", span="auto",
           }
       }
     span=as.integer(span)
-    endyear=as.integer(endyear) 
+    endyear=as.integer(endyear)
     if (span > 5 | span < 1){
       warning("Span out of range; returning NA")
       return(NA)}
@@ -998,7 +988,7 @@ read.acs=function(filename, endyear="auto", span="auto",
       {geocols=3:1
        warning("Using first three columns as geographic headers.", call.=F)
      }
-    
+
     if (identical(str_sub(filename, start=-4), ".zip")) {
       zip.filename=filename
       contents=unzip(zip.filename, list=T)
@@ -1024,7 +1014,7 @@ read.acs=function(filename, endyear="auto", span="auto",
     if (identical(skip, "auto")){
       skip=figure.skip()
     }
-    
+
                                         # figure out column names based on headers
     get.colnames=function(geocols, skip){
       con=make.con()
@@ -1039,7 +1029,7 @@ read.acs=function(filename, endyear="auto", span="auto",
     if (identical(col.names, "auto")) {
       col.names=get.colnames(geocols, skip)
     }
-    # helper function to read and clean data        
+    # helper function to read and clean data
     get.acs=function(geocols, skip) {
       con=make.con()
       open(con)
@@ -1052,16 +1042,15 @@ read.acs=function(filename, endyear="auto", span="auto",
       in.data[in.data=="*****"]=0
       for (i in (length(geocols)+1):length(in.data)) {
         in.data[[i]]=gsub(",", "", in.data[[i]])
-        in.data[[i]]=as.numeric(in.data[[i]])  
+        in.data[[i]]=as.numeric(in.data[[i]])
       }
       colnames(in.data)[-geocols]=col.names
       close(con)
       in.data
     }
-      
+
     in.data=get.acs(geocols=geocols, skip=skip)
     acs.colnames=unname(col.names)
-#  acs.colnames=sub(colnames(in.data[seq((length(geocols)+1),length(in.data),2)]), pattern="..Estimate.", replacement="")
                                           # create new acs object
     if (acs.units=="auto") {
                                           # try to guess variable types from filename
@@ -1070,9 +1059,9 @@ read.acs=function(filename, endyear="auto", span="auto",
     acs.units=factor(acs.units, levels=.acs.unit.levels)
     acs.obj=new(Class="acs",
       endyear=endyear,
-      span=span, 
+      span=span,
       geography=as.data.frame(in.data[,1:length(geocols)]),
-      acs.colnames=acs.colnames, 
+      acs.colnames=acs.colnames,
       acs.units=acs.units,
       currency.year=endyear,
       standard.error=as.matrix(in.data[,seq((length(geocols)+2),length(in.data), 2)]),
@@ -1080,7 +1069,7 @@ read.acs=function(filename, endyear="auto", span="auto",
       estimate=as.matrix(in.data[,seq((length(geocols)+1),length(in.data), 2)]
         )
       )
-    
+
   # convert 90% MOE into standard error, correct for 2005 flaw
     if (endyear(acs.obj)<=2005)
       acs.obj@standard.error=acs.obj@standard.error/1.65
@@ -1093,7 +1082,7 @@ read.acs=function(filename, endyear="auto", span="auto",
 acs.fetch=function(endyear, span=5, geography, table.name,
       table.number, variable, keyword, dataset="acs", key, col.names="auto", ...)
       {
-        var.max=40  # most var for acs call; keep even; 
+        var.max=40  # most var for acs call; keep even;
         # check some basic stuff about arguments
         if (missing(key)){
           if (file_test("-f", system.file("extdata/key.rda", package="acs"))) {
@@ -1125,13 +1114,11 @@ acs.fetch=function(endyear, span=5, geography, table.name,
           arglist=as.list(environment())
           missing.args=unlist(lapply(arglist, is.symbol))
           arglist=arglist[!missing.args]
-#          arglist$dataset="acs"
           arglist=arglist[names(arglist)!="variable"]
           arglist=arglist[names(arglist)!="geography"]
           arglist=arglist[names(arglist)!="key"]
           arglist=arglist[names(arglist)!="col.names"]
           arglist=arglist[names(arglist)!="var.max"]
-  #        return(arglist)
           variable=do.call(acs.lookup, arglist)
           if(!isS4(variable) && is.na(variable)){return(NA)}}
         # when variable is provided
@@ -1167,7 +1154,6 @@ acs.fetch=function(endyear, span=5, geography, table.name,
           else {
             col.names=paste(variables.xml$table.name, variables.xml$variable.name, sep=": ")
           }}
-    #    if (identical(acs.units, "auto")) acs.units=rep("auto",(length(variables)/2))
         if (identical(col.names, "auto") & dataset=="acs") col.names=rep("auto",(length(variables)/2))
         if (identical(col.names, "auto") & (dataset=="sf1" | dataset=="sf3")) col.names=rep("auto",length(variables))
         # deal with too many variables -- API currently limits to < 50
@@ -1213,8 +1199,6 @@ acs.fetch=function(endyear, span=5, geography, table.name,
         in.data=in.data[,-length(in.data)] # remove junk NA columns
                                             # set geocols
         geocols=(length(in.data)-geo.length+1):length(in.data)
-        ## col.names=names(in.data)[seq(1,(length(in.data)-geo.length), 2)]
-        ## col.names[1]=gsub("X..","",col.names[1])
         if (identical(col.names[1], "auto")) {  # check this!
           if(dataset=="acs"){
           col.names=names(in.data)[seq(1,(length(in.data)-geo.length), 2)]
@@ -1223,7 +1207,7 @@ acs.fetch=function(endyear, span=5, geography, table.name,
           }
           col.names[1]=gsub("X..","",col.names[1])
           col.names=gsub(pattern="E$", x=col.names, replacement="")
-          
+
         }
         datacols=1:(length(in.data)-geo.length)
         in.data[in.data=="*****"]=0
@@ -1232,20 +1216,14 @@ acs.fetch=function(endyear, span=5, geography, table.name,
                                             # clean brackets
         for (i in 1:length(datacols)) {
           in.data[[i]]=gsub(",", "", in.data[[i]])
-          in.data[[i]]=as.numeric(in.data[[i]])  
+          in.data[[i]]=as.numeric(in.data[[i]])
         }
-                                            # create new acs object
-    #    if (identical(acs.units[1], "auto")) {
-                                              # try to guess variable types from filename
-    #    acs.units=.acs.identify.units(col.names)
-    #    }
-    #    acs.units=factor(acs.units, levels=.acs.unit.levels)
         GEOGRAPHY=as.data.frame(in.data[,geocols])
         names(GEOGRAPHY)=gsub(".", "", names(GEOGRAPHY), fixed=T) # remove strange trailing period
         if(dataset=="acs"){
         acs.obj=new(Class="acs",
           endyear=endyear,
-          span=span, 
+          span=span,
           geography=GEOGRAPHY,
           acs.colnames=col.names,
           acs.units=.acs.identify.units(col.names),
@@ -1257,7 +1235,7 @@ acs.fetch=function(endyear, span=5, geography, table.name,
         if(dataset=="sf1" | dataset=="sf3"){
         acs.obj=new(Class="acs",
           endyear=endyear,
-          span=span, 
+          span=span,
           geography=GEOGRAPHY,
           acs.colnames=col.names,
           acs.units=.acs.identify.units(col.names),
@@ -1266,7 +1244,7 @@ acs.fetch=function(endyear, span=5, geography, table.name,
           modified=F,
           estimate=as.matrix(in.data[1:(length(in.data)-geo.length)])
           )
-         }     
+         }
       # convert 90% MOE into standard error, correct for 2005 flaw
         if (endyear(acs.obj)<=2005)
           acs.obj@standard.error=acs.obj@standard.error/1.65
@@ -1367,16 +1345,6 @@ setReplaceMethod(f="[", signature="acs",
             if (is.null(value$error)) x@standard.error[i,j]=value[[2]]
             else x@standard.error[i,j]=value$error
           } else x@standard.error[i,j]=value$standard.error
-          ## standard.error --> 0
-                                      # is value a single number?
-          ## } else if (is.numeric(value) && (length(value)==1)) {
-          ##   x@estimate[i,j]=value
-          ##   x@standard.error[i,j]=0
-          ##                                 # is value a vector of numbers?
-          ## } else if (is.numeric(value) && (length(value)==length(x[i,j]))){
-          ##   x@estimate[i,j]=value
-          ##   x@standard.error[i,j]=0
-          ## next stanza does the work of both of the previous:
         } else if (is.numeric(value)) {
           x@estimate[i,j]=value
           x@standard.error[i,j]=0
@@ -1434,7 +1402,7 @@ setMethod("+", signature(e1 = "acs", e2 = "acs"), function(e1, e2) {
     acs.obj
   }
            )
-  
+
   setMethod("-", signature(e1 = "acs", e2 = "acs"), function(e1, e2) {
     header=.acs.combine.headers(e1, e2, "-")
     NEW.ESTIMATE=estimate(e1)-estimate(e2)
@@ -1454,37 +1422,6 @@ setMethod("+", signature(e1 = "acs", e2 = "acs"), function(e1, e2) {
   }
            )
 
- ## old; works, but not great.  
-  # .acs.divider=function(num, den, proportion, verbose=F) {
-  #   if (proportion==T) header=.acs.combine.headers(num, den, "/")
-  #   else header=.acs.combine.headers(num, den, ":")
-  #   p=estimate(num)/estimate(den)
-  #   if (all(estimate(den)!=0) && proportion==T & all((p^2 * standard.error(den)^2)>0)){
-  #     header$acs.units=factor("proportion", levels=.acs.unit.levels)
-  #     if (verbose) {warning("** using formula for PROPORTIONS, which assumes that numerator is a SUBSET of denominator **")}
-  #     NEW.ERROR=sqrt(standard.error(num)^2 - (p^2 * standard.error(den)^2))/estimate(den)}
-  #   else {
-  # #   a recommended correction when term under sqrt is negative
-  #     if (proportion==T){
-  #       if(verbose){warning("** due to the nature of some of the errors, using the more conservative formula for RATIOS, which assumes that numerator is not a subset of denominator **")}}
-  #     header$acs.units=factor("ratio", levels=.acs.unit.levels)
-  #     NEW.ERROR=sqrt(standard.error(num)^2 + (p^2 * standard.error(den)^2))/estimate(den)
-  #   }
-  #   acs.obj=new(Class="acs",
-  #     endyear=header$endyear,
-  #     span=header$span,
-  #     modified=T,
-  #     geography=header$geography,
-  #     acs.units=header$acs.units,
-  #     currency.year=header$currency.year,
-  #     acs.colnames=header$acs.colnames,
-  #     estimate=p,
-  #     standard.error=NEW.ERROR)
-  #   acs.obj=.acs.dimnames(acs.obj)
-  #   acs.obj}
-
-# new, to deal with zeroes, and more precise ratio-style correction
-
   .acs.divider=function(num, den, proportion, verbose=F, output="result") {
     if (proportion==T) header=.acs.combine.headers(num, den, "/")
     else header=.acs.combine.headers(num, den, ":")
@@ -1492,7 +1429,7 @@ setMethod("+", signature(e1 = "acs", e2 = "acs"), function(e1, e2) {
 # start with proportion-style
     if (proportion==T){
         header$acs.units=rep(factor("proportion", levels=.acs.unit.levels), length(header$acs.units))
-        if (verbose) {warning("** using formula for PROPORTIONS, which assumes that numerator is a SUBSET of denominator **")}  
+        if (verbose) {warning("** using formula for PROPORTIONS, which assumes that numerator is a SUBSET of denominator **")}
         NEW.ERROR=suppressWarnings(sqrt(standard.error(num)^2 - (p^2 * standard.error(den)^2))/estimate(den))
         # change all that are should be ratio-stye
         # index for ratio corrections
@@ -1536,9 +1473,9 @@ setMethod("+", signature(e1 = "acs", e2 = "acs"), function(e1, e2) {
     else if(output=="div.method"){ratio.report}
     else acs.obj
   }
-      
 
-      
+
+
   setMethod("/", signature(e1 = "acs", e2 = "acs"), function(e1, e2) {
   # by default, use more conservative "ratio-style" dividing
     warning("** using the more conservative formula for ratio-type
@@ -1547,7 +1484,7 @@ setMethod("+", signature(e1 = "acs", e2 = "acs"), function(e1, e2) {
     and not a ratio, use divide.acs(..., method=\"proportion\") **")
     .acs.divider(num=e1, den=e2, proportion=F, verbose=F)
   })
-  
+
   divide.acs=function(numerator, denominator, method="ratio", verbose=T, output="result"){
     if(identical(method, "ratio")) {
       .acs.divider(num=numerator, den=denominator, proportion=F, verbose=verbose, output=output)
@@ -1556,7 +1493,7 @@ setMethod("+", signature(e1 = "acs", e2 = "acs"), function(e1, e2) {
     } else {warning("Error: must set method to \"ratio\" or \"proportion\"")
             NA}
   }
-  
+
   setMethod("*", signature(e1 = "acs", e2 = "acs"), function(e1, e2) {
     header=.acs.combine.headers(e1, e2, "*")
     NEW.ESTIMATE=estimate(e1)*estimate(e2)
@@ -1672,7 +1609,7 @@ confint.acs=function(object, parm="all", level=.95, alternative="two.sided",...)
   for (i in parm) {
     conf.int.lower=estimate(object[,i])-standard.error(object[,i])*z.lower
     conf.int.upper=estimate(object[,i])+standard.error(object[,i])*z.upper
-    RESULT[[acs.colnames(object)[i]]]=data.frame(conf.int.lower, 
+    RESULT[[acs.colnames(object)[i]]]=data.frame(conf.int.lower,
             conf.int.upper,
             row.names=geography(object)[[1]])
     names(RESULT[[acs.colnames(object)[i]]])=labels
@@ -1716,7 +1653,7 @@ setMethod("sum", signature(x = "acs"), function(x,
   acs.obj
 })
 
-.apply.acs=function(X, MARGIN, FUN, ...) 
+.apply.acs=function(X, MARGIN, FUN, ...)
    {
      FUN=match.fun(FUN)
      if (identical(MARGIN, 1)){       # apply row-wise
@@ -1743,7 +1680,7 @@ setMethod("sum", signature(x = "acs"), function(x,
      if (all(MARGIN==c(1,2))){
        acs.obj=FUN(apply(X, MARGIN=2, FUN=FUN, ...), ...)}
      acs.obj}
-     
+
 
 if (!isGeneric("apply")) {
   setGeneric("apply", def=function(X, MARGIN, FUN, ...){standardGeneric("apply")})}else{}
@@ -1751,9 +1688,9 @@ setMethod("apply", signature="acs", def=function(X, MARGIN, FUN, ...){.apply.acs
 
 if (!isGeneric("acs.colnames<-")) {
           setGeneric("acs.colnames<-", def=function(x, value){standardGeneric("acs.colnames<-")})}else{}
-        
+
         #  setGeneric("acs.colnames<-", function(x, value) standardGeneric("acs.colnames<-"))
-          
+
         setReplaceMethod(f="acs.colnames", signature="acs",
                          definition=function(x,value){
                            x@acs.colnames=value
@@ -1762,10 +1699,10 @@ if (!isGeneric("acs.colnames<-")) {
                            validObject(x)
                            return(x)
                          })
-        
+
         if (!isGeneric("geography<-")) {
           setGeneric("geography<-", def=function(object, value){standardGeneric("geography<-")})}else{}
-        
+
         setReplaceMethod(f="geography", signature="acs",
                          definition=function(object,value){
                            object@geography=value
@@ -1774,11 +1711,11 @@ if (!isGeneric("acs.colnames<-")) {
                            validObject(object)
                            return(object)
                          })
-        
-        
+
+
         if (!isGeneric("endyear<-")) {
           setGeneric("endyear<-", function(object, value) standardGeneric("endyear<-"))}else{}
-        
+
         setReplaceMethod(f="endyear", signature="acs",
                          definition=function(object,value){
                            warning(paste(
@@ -1790,33 +1727,33 @@ if (!isGeneric("acs.colnames<-")) {
                                          value,
                                          ", without converting currency values.\nPlease see ?endyear and ?currency.year for more information",
                                          sep="")
-                                   , call.=F) 
+                                   , call.=F)
                            object@endyear=as.integer(value)
                            object@currency.year=as.integer(value)
                            object@modified=T
                            validObject(object)
                            return(object)
                          })
-        
+
 if (!isGeneric("span<-")) {
   setGeneric("span<-", function(x, value) standardGeneric("span<-"))}else{}
-        
+
 setReplaceMethod(f="span", signature="acs",
                  definition=function(x,value){
                    warning(paste("Changing value of span from ",
                                  span(x), " to ", value, ".\nThis is an unusual
                          thing to do, unless the original value was
                          incorrect.\nSee ?acs for more information",
-                                 sep=""), call.=F) 
+                                 sep=""), call.=F)
                    x@span=as.integer(value)
                    x@modified=T
                    validObject(x)
                    return(x)
                  })
-       
+
 if (!isGeneric("acs.units<-")) {
   setGeneric("acs.units<-", function(x, value) standardGeneric("acs.units<-"))}else{}
-        
+
 setReplaceMethod(f="acs.units", signature="acs",
                  definition=function(x,value){
                    x@acs.units=factor(value, levels=.acs.unit.levels)
@@ -1832,7 +1769,7 @@ setReplaceMethod(f="currency.year", signature="acs",
                  definition=function(object, value){
                    currency.convert(object, rate="auto", newyear=value)
                  })
-      
+
 currency.convert=function(object, rate="auto", newyear=NA_integer_, verbose=F){
   if (rate=="auto"){
     .env=environment()
@@ -1871,9 +1808,9 @@ currency.convert=function(object, rate="auto", newyear=NA_integer_, verbose=F){
   validObject(object)
   return(object)
 }
-      
+
       # helper function for replacing geography or acs.colnames
-      
+
       prompt.acs=function(object, filename=NA, name=NA,
         what="acs.colnames", geocols="all", ...){
         print("To end session, enter a blank line.")
@@ -1899,7 +1836,7 @@ currency.convert=function(object, rate="auto", newyear=NA_integer_, verbose=F){
           print("Type [c]ount, [d]ollars, [p]roportion, [r]atio, or [o]ther.")
           for (i in 1:length(value)){
             line.input=readline(prompt=paste(acs.colnames(object)[i], " is currently in these units: ", value[i],".  Change to what units?: (c,d,p,r,o)\n", sep=""))
-            if (line.input=="") {break} else {input[i]=line.input}            
+            if (line.input=="") {break} else {input[i]=line.input}
           }
           for (i in .acs.unit.levels){
             value[input==substr(start=1, stop=1,i)]=i}
@@ -1914,13 +1851,13 @@ setMethod("plot",
     signature(x = "acs"),
     function (x, conf.level=.95, err.col="red", err.lwd=1,
     err.pch="-", err.cex=2, err.lty=2, x.res=300, labels="auto",
-    by="geography", true.min=T, ...) 
+    by="geography", true.min=T, ...)
     {
       # internal plot function to plot individual x-y plots with conf
       # intervals, assume that either i or j or length 1
       plot.xy.acs=function(x, object, conf.int.upper, conf.int.lower, estimates, labels, xlab, ylab, ...){
         if(missing(xlab)) xlab=""
-        if(missing(ylab)) ylab=""       
+        if(missing(ylab)) ylab=""
         plot(rep(x,2), c(conf.int.upper, conf.int.lower), type="n", xaxt="n", xlab=xlab, ylab=ylab,...)
         axis(side=1, labels=labels, at=x, ...)
         lines(x=matrix(c(x,x,rep(NA, length(x))), ncol=length(x), byrow=T), matrix(c(conf.int.lower, conf.int.upper, rep(NA, length(x))), ncol=length(x), byrow=T), col=err.col, lwd=err.lwd, lty=err.lty)
@@ -1976,14 +1913,14 @@ setMethod("plot",
           par(mfrow=c(i, 1))
         for (k in 1:i){
           plot(x[k,], sub=geography(x)[k,1], conf.level=conf.level, err.col=err.col, err.lwd=err.lwd, err.pch=err.pch, err.cex=err.cex, err.lty=err.lty, labels=labels,...)
-        }        
+        }
         } else if (by=="acs.colnames") {
          par(mfrow=c(1,j))
         for (k in 1:j){
           plot(x[,k], sub=acs.colnames(x)[k], conf.level=conf.level,
       err.col=err.col, err.lwd=err.lwd, err.pch=err.pch,
       err.cex=err.cex, err.lty=err.lty, labels=labels,...)
-       }        
+       }
        }
       }
     }
