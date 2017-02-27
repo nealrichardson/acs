@@ -21,6 +21,8 @@
 
 .acs.unit.levels <- c("count", "dollars", "proportion", "ratio", "other")
 
+globalVariables(c("fips.state", "fips.school", "fips.county.subdivision",
+    "fips.american.indian.area", "fips.county", "fips.place"))
 
 # .acs.dimnames() ensures that a returned acs object includes proper row
 # (geography) and column (col.names) labels
@@ -112,18 +114,7 @@ setClass(Class = "acs", representation = representation(endyear = "integer", spa
     span = NA_integer_, acs.units = factor(levels = .acs.unit.levels), currency.year = NA_integer_,
     modified = F))
 
-is.acs <- function(object) {
-    if (class(object) == "acs") {
-        TRUE
-    } else {
-        FALSE
-    }
-}
-
-globalVariables(c("fips.state", "fips.school", "fips.county.subdivision", "fips.american.indian.area",
-    "fips.county", "fips.place"))
-
-
+is.acs <- function (object) class(object) == "acs"
 
 setMethod("endyear", "acs", function(object) object@endyear)
 setMethod("span", "acs", function(object) object@span)
@@ -131,43 +122,23 @@ setMethod("geography", "acs", function(object) object@geography)
 setMethod("acs.colnames", "acs", function(object) object@acs.colnames)
 setMethod("currency.year", "acs", function(object) object@currency.year)
 setMethod("modified", "acs", function(object) object@modified)
-
-if (!isGeneric("acs.units")) {
-    setGeneric("acs.units", def = function(object) {
-        standardGeneric("acs.units")
-    })
-} else {
-}
 setMethod("acs.units", "acs", function(object) object@acs.units)
-
-if (!isGeneric("estimate")) {
-    setGeneric("estimate", def = function(object, which, conf.lev, ...) {
-        standardGeneric("estimate")
-    })
-} else {
-}
 setMethod("estimate", "acs", function(object) object@estimate)
-
-if (!isGeneric("standard.error")) {
-    setGeneric("standard.error", def = function(object) {
-        standardGeneric("standard.error")
-    })
-} else {
-}
 setMethod("standard.error", "acs", function(object) object@standard.error)
 
-setMethod(f = "[", signature = "acs", definition = function(x, i, j, ..., drop = FALSE) {
+setMethod("[", "acs", function (x, i, j, ..., drop = FALSE) {
     if (missing(i))
         i <- 1:dim(x@estimate)[1]
     if (missing(j))
         j <- 1:dim(x@estimate)[2]
-    new(Class = "acs", endyear = endyear(x), span = span(x), geography = geography(x)[i,
-        ], acs.colnames = acs.colnames(x)[j], modified = modified(x), acs.units = acs.units(x)[j],
+    new(Class = "acs", endyear = endyear(x), span = span(x),
+        geography = geography(x)[i, ], acs.colnames = acs.colnames(x)[j],
+        modified = modified(x), acs.units = acs.units(x)[j],
         currency.year = currency.year(x), estimate = estimate(x)[i, j, drop = F],
         standard.error = standard.error(x)[i, j, drop = F])
 })
 
-setReplaceMethod(f = "[", signature = "acs", definition = function(x, i, j, value) {
+setReplaceMethod("[", "acs", function (x, i, j, value) {
     if (missing(i))
         i <- 1:dim(x)[1]
     if (missing(j))
@@ -557,26 +528,9 @@ setMethod("sum", signature(x = "acs"), function(x, agg.term = c("aggregate", "ag
     acs.obj
 }
 
-
-if (!isGeneric("apply")) {
-    setGeneric("apply", def = function(X, MARGIN, FUN, ...) {
-        standardGeneric("apply")
-    })
-} else {
-}
 setMethod("apply", signature = "acs", def = function(X, MARGIN, FUN, ...) {
     .apply.acs(X, MARGIN, FUN, ...)
 })
-
-if (!isGeneric("acs.colnames<-")) {
-    setGeneric("acs.colnames<-", def = function(x, value) {
-        standardGeneric("acs.colnames<-")
-    })
-} else {
-}
-
-# setGeneric('acs.colnames<-', function(x, value)
-# standardGeneric('acs.colnames<-'))
 
 setReplaceMethod(f = "acs.colnames", signature = "acs", definition = function(x,
     value) {
@@ -587,13 +541,6 @@ setReplaceMethod(f = "acs.colnames", signature = "acs", definition = function(x,
     return(x)
 })
 
-if (!isGeneric("geography<-")) {
-    setGeneric("geography<-", def = function(object, value) {
-        standardGeneric("geography<-")
-    })
-} else {
-}
-
 setReplaceMethod(f = "geography", signature = "acs", definition = function(object,
     value) {
     object@geography <- value
@@ -602,12 +549,6 @@ setReplaceMethod(f = "geography", signature = "acs", definition = function(objec
     validObject(object)
     return(object)
 })
-
-
-if (!isGeneric("endyear<-")) {
-    setGeneric("endyear<-", function(object, value) standardGeneric("endyear<-"))
-} else {
-}
 
 setReplaceMethod(f = "endyear", signature = "acs", definition = function(object,
     value) {
@@ -622,11 +563,6 @@ setReplaceMethod(f = "endyear", signature = "acs", definition = function(object,
     return(object)
 })
 
-if (!isGeneric("span<-")) {
-    setGeneric("span<-", function(x, value) standardGeneric("span<-"))
-} else {
-}
-
 setReplaceMethod(f = "span", signature = "acs", definition = function(x, value) {
     warning(paste("Changing value of span from ", span(x), " to ", value, ".\nThis is an unusual
                          thing to do, unless the original value was
@@ -638,24 +574,12 @@ setReplaceMethod(f = "span", signature = "acs", definition = function(x, value) 
     return(x)
 })
 
-if (!isGeneric("acs.units<-")) {
-    setGeneric("acs.units<-", function(x, value) standardGeneric("acs.units<-"))
-} else {
-}
-
 setReplaceMethod(f = "acs.units", signature = "acs", definition = function(x, value) {
     x@acs.units <- factor(value, levels = .acs.unit.levels)
     x@modified <- T
     validObject(x)
     return(x)
 })
-
-if (!isGeneric("currency.year<-")) {
-    setGeneric("currency.year<-", def = function(object, value) {
-        standardGeneric("currency.year<-")
-    })
-} else {
-}
 
 setReplaceMethod(f = "currency.year", signature = "acs", definition = function(object,
     value) {
@@ -752,103 +676,3 @@ prompt.acs <- function(object, filename = NA, name = NA, what = "acs.colnames", 
     }
     value
 }
-
-setMethod("plot", signature(x = "acs"), function(x, conf.level = 0.95, err.col = "red",
-    err.lwd = 1, err.pch = "-", err.cex = 2, err.lty = 2, x.res = 300, labels = "auto",
-    by = "geography", true.min = T, ...) {
-    # internal plot function to plot individual x-y plots with conf intervals, assume
-    # that either i or j or length 1
-    plot.xy.acs <- function(x, object, conf.int.upper, conf.int.lower, estimates,
-        labels, xlab, ylab, ...) {
-        if (missing(xlab))
-            xlab <- ""
-        if (missing(ylab))
-            ylab <- ""
-        plot(rep(x, 2), c(conf.int.upper, conf.int.lower), type = "n", xaxt = "n",
-            xlab = xlab, ylab = ylab, ...)
-        axis(side = 1, labels = labels, at = x, ...)
-        lines(x = matrix(c(x, x, rep(NA, length(x))), ncol = length(x), byrow = T),
-            matrix(c(conf.int.lower, conf.int.upper, rep(NA, length(x))), ncol = length(x),
-                byrow = T), col = err.col, lwd = err.lwd, lty = err.lty)
-        points(x, conf.int.upper, pch = err.pch, cex = err.cex, col = err.col)
-        points(x, conf.int.lower, pch = err.pch, cex = err.cex, col = err.col)
-        points(x, estimates, ...)
-    }
-    acs.density.plot <- function(x, type = "l", xlim, xlab = acs.colnames(x), ylab = "Density Distribution",
-        conf.level, col = "black", err.col, err.lwd, err.lty, x.res, ...) {
-        est <- estimate(x)
-        err <- standard.error(x)
-        if (missing(xlim))
-            xlim <- c(est - (4 * err), est + (4 * err))
-        x.vals <- seq(from = xlim[1], to = xlim[2], by = (xlim[2] - xlim[1])/x.res)
-        plot(x.vals, dnorm(x.vals, mean = est, sd = err), type = type, xlab = xlab,
-            ylab = ylab, col = col, ...)
-        if (conf.level) {
-            abline(v = qnorm(mean = est, sd = err, p = c(((1 - conf.level)/2), (1 -
-                ((1 - conf.level)/2)))), col = err.col, lwd = err.lwd, lty = err.lty)
-        }
-    }
-    i <- dim(x)[1]
-    j <- dim(x)[2]
-    if (length(x) == 1) {
-        acs.density.plot(x, conf.level = conf.level, err.col = err.col, err.lwd = err.lwd,
-            err.lty = err.lty, x.res = x.res, ...)
-    } else if (i == 1 | j == 1) {
-        con <- confint(x, level = conf.level)
-        conf.int.upper <- NA
-        conf.int.lower <- NA
-        estimates <- NA
-        if (i == 1) {
-            # one row
-            if (identical(labels, "auto"))
-                labels <- acs.colnames(x)
-            for (k in 1:j) {
-                conf.int.upper[k] <- as.numeric(con[[k]][2])
-                if (true.min == T) {
-                  conf.int.lower[k] <- as.numeric(con[[k]][1])
-                } else {
-                  if (true.min == F) {
-                    true.min <- 0
-                  }
-                  conf.int.lower[k] <- max(true.min, as.numeric(con[[k]][1]))
-                }
-                estimates[k] <- estimate(x)[1, k]
-            }
-        } else {
-            if (identical(labels, "auto"))
-                labels <- geography(x)[[1]]
-            for (k in 1:i) {
-                # one column
-                conf.int.upper[k] <- as.numeric(con[[1]][k, 2])
-                if (true.min == T) {
-                  conf.int.lower[k] <- con[[1]][k, 1]
-                } else {
-                  if (true.min == F) {
-                    true.min <- 0
-                  }
-                  conf.int.lower[k] <- max(true.min, con[[1]][k, 1])
-                }
-                estimates[k] <- estimate(x)[k, 1]
-            }
-        }
-        plot.xy.acs(x = 1:max(i, j), object = x, conf.int.upper = conf.int.upper,
-            conf.int.lower = conf.int.lower, estimates = estimates, labels = labels,
-            ...)
-    } else {
-        if (by == "geography") {
-            par(mfrow = c(i, 1))
-            for (k in 1:i) {
-                plot(x[k, ], sub = geography(x)[k, 1], conf.level = conf.level, err.col = err.col,
-                  err.lwd = err.lwd, err.pch = err.pch, err.cex = err.cex, err.lty = err.lty,
-                  labels = labels, ...)
-            }
-        } else if (by == "acs.colnames") {
-            par(mfrow = c(1, j))
-            for (k in 1:j) {
-                plot(x[, k], sub = acs.colnames(x)[k], conf.level = conf.level, err.col = err.col,
-                  err.lwd = err.lwd, err.pch = err.pch, err.cex = err.cex, err.lty = err.lty,
-                  labels = labels, ...)
-            }
-        }
-    }
-})
