@@ -1,5 +1,6 @@
-acs.fetch <- function(endyear, span = 5, geography, table.name, table.number, variable,
-    keyword, dataset = "acs", key, col.names = "auto", ...) {
+acs.fetch <- function (endyear, span = 5, geography, table.name, table.number,
+    variable, keyword, dataset = "acs", key, col.names = "auto", ...) {
+        
     var.max <- 40  # most var for acs call; keep even;
     # check some basic stuff about arguments
     if (missing(key)) {
@@ -148,12 +149,12 @@ acs.fetch <- function(endyear, span = 5, geography, table.name, table.number, va
         dataset = dataset, geo.call = geography)
     geo.length <- length(api.in(geography)) + 2
     # adding check to stop bad url / maybe do this later
-    url.test <- url.exists(api.url, .header = T)
+    url.test <- url.exists(api.url, .header = TRUE)
     if (url.test["statusMessage"] != "OK") {
-        warning(call. = F, paste("No data found at:\n  ", api.url, sep = ""))
+        warning(call. = FALSE, paste("No data found at:\n  ", api.url, sep = ""))
     }
     in.data <- suppressWarnings(read.csv(api.url, na.strings = c("-", "**", "***",
-        "(X)", "N", "null"), stringsAsFactors = F))
+        "(X)", "N", "null"), stringsAsFactors = FALSE))
     in.data <- in.data[, -length(in.data)]  # remove junk NA columns
     # set geocols
     geocols <- (length(in.data) - geo.length + 1):length(in.data)
@@ -170,27 +171,27 @@ acs.fetch <- function(endyear, span = 5, geography, table.name, table.number, va
     }
     datacols <- 1:(length(in.data) - geo.length)
     in.data[in.data == "*****"] <- 0
-    in.data[[1]] <- gsub("[", "", in.data[[1]], fixed = T)
-    in.data[[length(in.data)]] <- gsub("]", "", in.data[[length(in.data)]], fixed = T)
+    in.data[[1]] <- gsub("[", "", in.data[[1]], fixed = TRUE)
+    in.data[[length(in.data)]] <- gsub("]", "", in.data[[length(in.data)]], fixed = TRUE)
     # clean brackets
     for (i in 1:length(datacols)) {
         in.data[[i]] <- gsub(",", "", in.data[[i]])
         in.data[[i]] <- as.numeric(in.data[[i]])
     }
     GEOGRAPHY <- as.data.frame(in.data[, geocols])
-    names(GEOGRAPHY) <- gsub(".", "", names(GEOGRAPHY), fixed = T)  # remove strange trailing period
+    names(GEOGRAPHY) <- gsub(".", "", names(GEOGRAPHY), fixed = TRUE)  # remove strange trailing period
     if (dataset == "acs") {
         acs.obj <- new(Class = "acs", endyear = endyear, span = span, geography = GEOGRAPHY,
             acs.colnames = col.names, acs.units = .acs.identify.units(col.names),
             currency.year = endyear, standard.error = as.matrix(in.data[, seq(2,
-                (length(in.data) - geo.length), 2)]), modified = F, estimate = as.matrix(in.data[,
+                (length(in.data) - geo.length), 2)]), modified = FALSE, estimate = as.matrix(in.data[,
                 seq(1, (length(in.data) - geo.length), 2)]))
     }
     if (dataset == "sf1" | dataset == "sf3") {
         acs.obj <- new(Class = "acs", endyear = endyear, span = span, geography = GEOGRAPHY,
             acs.colnames = col.names, acs.units = .acs.identify.units(col.names),
             currency.year = endyear, standard.error = as.matrix(0 * (in.data[1:(length(in.data) -
-                geo.length)])), modified = F, estimate = as.matrix(in.data[1:(length(in.data) -
+                geo.length)])), modified = FALSE, estimate = as.matrix(in.data[1:(length(in.data) -
                 geo.length)]))
     }
     # convert 90% MOE into standard error, correct for 2005 flaw
