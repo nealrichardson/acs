@@ -1,0 +1,7 @@
+setGeneric("endyear", function (object) standardGeneric("endyear"))
+setGeneric("span", function (object) standardGeneric("span"))
+setGeneric("geography", function (object) standardGeneric("geography"))
+setGeneric("acs.colnames", function (object) standardGeneric("acs.colnames"))
+setGeneric("currency.year", function (object) standardGeneric("currency.year"))
+setGeneric("modified", function (object) standardGeneric("modified"))
+setGeneric("results", function (object) standardGeneric("results"))

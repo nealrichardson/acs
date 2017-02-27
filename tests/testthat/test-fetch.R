@@ -10,5 +10,6 @@ test_that("Fetch with valid query", {
 test_that("Fetch with valid query", {
     d <- acs.fetch(dataset="sf3", variable="P147H010", endyear=2000,
         geo=geo.make(state="CA"))
-    print(d)
+    expect_equal(estimate(d)[1,1], 93774)
+    expect_output(print(d), "California 93774 +/- 0", fixed=TRUE)
 })
