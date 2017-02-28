@@ -66,7 +66,7 @@ acs.lookup(endyear, span = 5, dataset = "acs", keyword,
     \item{case.sensitive}{a logical flag indicating whether searching is
       case-sensitive (the default) or not.  Note that the Census is not
       entirely consistent in capitalization in table and variable names,
-      so setting \code{case.sensitive=F} may be useful in finding all
+      so setting \code{case.sensitive=FALSE} may be useful in finding all
       possible matches.}
   }
 
@@ -111,4 +111,3 @@ age.by.sex
 workers.age.by.sex=age.by.sex[4:6]
 workers.age.by.sex
 }
-

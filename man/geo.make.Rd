@@ -42,7 +42,7 @@ geo.make(us, region, division, state, county, county.subdivision,
   state.legislative.district.lower, puma, zip.code,
   american.indian.area, school.district.elementary,
   school.district.secondary, school.district.unified,
-  combine = FALSE, combine.term = "aggregate", check = FALSE, key = "auto")
+  combine = FALSE, combine.term = "aggregate", check = FALSE, key = api.key.load())
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -191,15 +191,15 @@ geo.make(us, region, division, state, county, county.subdivision,
 
   \item{combine.term}{a character string to provide a label for
     aggregate geography, if data is combined}
-  
+
   \item{check}{logical flag indicating whether to run a check for valid
     geographies with Census API; defaults to FALSE; when TRUE, a current
     API key must be provided or installed}
 
-  \item{key}{when check=T and no API key has been previously installed
+  \item{key}{when check=TRUE and no API key has been previously installed
     through \code{api.key.install}, a string key may be provided here}
 
-} 
+}
 
 \details{In addition to creating individual combinations of census
   geographies, users can pass vector arguments (with recycling) to
@@ -221,10 +221,10 @@ geo.make(us, region, division, state, county, county.subdivision,
   specifying, for example, state, county, and place, the county will be
   ignored.
 
-  Note: when a geo.set with "combine=T" is passed to \code{acs.fetch},
+  Note: when a geo.set with "combine=TRUE" is passed to \code{acs.fetch},
   downloaded data will be aggregated in the resulting acs abject.  Some
-  users may therefore wish to specify "one.zero=T" as an additional
-  argument to \code{acs.fetch}; see \code{\link{sum-methods}}.  
+  users may therefore wish to specify "one.zero=TRUE" as an additional
+  argument to \code{acs.fetch}; see \code{\link{sum-methods}}.
 
 The following table may be helpful in figuring out which options to set
 for which Census summary levels.  For more information on which datasets
@@ -269,7 +269,7 @@ Ezra Haber Glenn \email{eglenn@mit.edu}
 }
 \references{
   \enumerate{
-  
+
     \item{"acs.R: An R Package for Neighborhood-Level Data from the
       U.S. Census." Ezra Haber Glenn, Department of Urban Studies and
       Planning, Massachusetts Institute of Technology.  Presented at the
@@ -315,4 +315,3 @@ geo.make(state="AK", state.legislative.district.lower="*")
 geo.make(state="NY", county="King", tract="*")
 
 }
-

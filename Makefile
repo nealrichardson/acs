@@ -11,11 +11,11 @@ test:
 deps:
 	R --slave -e 'install.packages(c("codetools", "testthat", "devtools", "roxygen2", "knitr"), repo="http://cran.at.r-project.org", lib=ifelse(nchar(Sys.getenv("R_LIB")), Sys.getenv("R_LIB"), .libPaths()[1]))'
 
-build: doc
+build:
 	R CMD build .
 
 check: build
-	-R CMD check --as-cran acs_$(VERSION).tar.gz
+	-R CMD check acs_$(VERSION).tar.gz
 	rm -rf acs.Rcheck/
 
 man: doc
@@ -34,4 +34,4 @@ build-vignettes: md
 	cd inst/doc && ls | grep .html | xargs -n 1 sed -i '' 's/.md)/.html)/g'
 
 covr:
-	R --slave -e 'library(covr); cv <- package_coverage(); df <- covr:::to_shiny_data(cv)[["file_stats"]]; cat("Line coverage:", round(100*sum(df[["Covered"]])/sum(df[["Relevant"]]), 1), "percent\\n")'
+	R --slave -e 'library(covr); cv <- package_coverage(type="all"); df <- covr:::to_shiny_data(cv)[["file_stats"]]; cat("Line coverage:", round(100*sum(df[["Covered"]])/sum(df[["Relevant"]]), 1), "percent\\n")'

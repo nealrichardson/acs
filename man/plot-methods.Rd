@@ -11,7 +11,7 @@ Plot acs objects, with both estimates and confidence intervals.}
 
 \S4method{plot}{acs}(x, conf.level=.95, err.col="red", err.lwd=1,
 err.pch="-", err.cex=2, err.lty=2, x.res=300, labels="auto",
-by="geography", true.min=T, ...)
+by="geography", true.min=TRUE, ...)
 
 }
 
@@ -19,7 +19,7 @@ by="geography", true.min=T, ...)
   \item{x}{the acs object to be plotted}
 
   \item{conf.level}{the desired confidence interval to use for error
-  bars; numeric between 0<1} 
+  bars; numeric between 0<1}
 
 \item{err.col}{the color to use for the error bars; analogous to
   graphic parameter \code{col}}
@@ -45,7 +45,7 @@ by="geography", true.min=T, ...)
 
 \item{by}{in cases where multiple rows and columns are plotted,
   whether to provide a different plot for each value of \code{geography} (the
-  default) or  \code{acs.colnames}; accepts either "geography" or "acs.colnames"} 
+  default) or  \code{acs.colnames}; accepts either "geography" or "acs.colnames"}
 
 \item{true.min}{whether to limit the lower bound of a confidence
   interval to some value or now; \code{TRUE} (the default) allows for
@@ -82,11 +82,11 @@ by="geography", true.min=T, ...)
 	\code{plot} will return a density plot of the estimate.  In this
 	case, \code{conf.level}, \code{err.col}, \code{err.lty}, and
 	\code{err.lwd} will be used to determine the properties of the
-	margins of error lines.  (For none, use \code{conf.level=F}.
+	margins of error lines.  (For none, use \code{conf.level=FALSE}.
 	For these density plots, users may also wish to set \code{xlim}
 	and \code{x.res}, which specify the horizontal extent and
 	resolution of the plot.)
-	
+
 	\code{plot} accepts many of the standard graphical arguments to
 	\code{plot}, such as \code{main}, \code{sub}, \code{xlab}, \code{pch},
 	and \code{col}, as well new ones listed above.
@@ -99,13 +99,13 @@ by="geography", true.min=T, ...)
 	category).  Setting \code{true.min} to \code{FALSE} (or 0) will
 	limit the lower boundary of any confidence intervals computed
 	and plotted.
-	
+
       }
 
     }
-    
+
   }
-  
+
 \examples{
 
 # load ACS data
@@ -141,4 +141,3 @@ labels=paste("grp. ",1:23))
 
 }
 \keyword{methods}
-

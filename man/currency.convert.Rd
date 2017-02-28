@@ -6,11 +6,11 @@
 \description{
   \code{currency.convert} provides a helper function to create a new
   copy of an acs-class object with a modified currency.year and
-  converted dollar values without altering the original object.  
+  converted dollar values without altering the original object.
 }
 \usage{
 
-currency.convert(object, rate="auto", newyear=NA_integer_, verbose=F)
+currency.convert(object, rate="auto", newyear=NA_integer_, verbose=FALSE)
 
 }
 
@@ -24,14 +24,14 @@ currency.convert(object, rate="auto", newyear=NA_integer_, verbose=F)
 }
 
 \details{
-  
+
   \code{currency.convert} provides a helper function to create a new
   copy of an acs-class object with a modified currency.year and
   converted dollar values without altering the original object.  When
   \code{rate="auto"} (the default), \code{currency.convert} will look up
   values from the \code{cpi} database to use in conversion.  When a
   numeric rate is provided through this option, actual \code{cpi} values
-  are ignored.  When \code{verbose=T}, currency.convert will provide
+  are ignored.  When \code{verbose=TRUE}, currency.convert will provide
   additional information about the rates of conversion and the
   acs.colnames converted.
 
@@ -55,10 +55,9 @@ currency.convert(object, rate="auto", newyear=NA_integer_, verbose=F)
 }
 \examples{
 lawrence10                                   # median income data, endyear = 2010
-currency.convert(lawrence10, newyear=2014)   # convert $$ to 2014 dollars 
+currency.convert(lawrence10, newyear=2014)   # convert $$ to 2014 dollars
 currency.convert(lawrence10, newyear=1929)   # convert $$ to 1929 dollars
 }
 \author{
 Ezra Haber Glenn \email{eglenn@mit.edu}
 }
-

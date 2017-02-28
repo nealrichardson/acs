@@ -39,7 +39,7 @@ currency.year(object)<-value
   \code{currency.convert} will look up values from the \code{cpi}
   database to use in conversion.  When a numeric rate is provided
   through this option, actual \code{cpi} values are ignored.  When
-  \code{verbose=T}, currency.convert will provide additional information
+  \code{verbose=TRUE}, currency.convert will provide additional information
   about the rates of conversion and the acs.colnames converted.
 
   As of version 2.0 the package includes CPI data from 1913 through

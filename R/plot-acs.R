@@ -49,10 +49,10 @@ setMethod("plot", signature(x = "acs"), function(x, conf.level = 0.95, err.col =
                 labels <- acs.colnames(x)
             for (k in 1:j) {
                 conf.int.upper[k] <- as.numeric(con[[k]][2])
-                if (true.min == T) {
+                if (true.min) {
                   conf.int.lower[k] <- as.numeric(con[[k]][1])
                 } else {
-                  if (true.min == F) {
+                  if (!true.min) {
                     true.min <- 0
                   }
                   conf.int.lower[k] <- max(true.min, as.numeric(con[[k]][1]))
@@ -65,10 +65,10 @@ setMethod("plot", signature(x = "acs"), function(x, conf.level = 0.95, err.col =
             for (k in 1:i) {
                 # one column
                 conf.int.upper[k] <- as.numeric(con[[1]][k, 2])
-                if (true.min == T) {
+                if (true.min) {
                   conf.int.lower[k] <- con[[1]][k, 1]
                 } else {
-                  if (true.min == F) {
+                  if (!true.min) {
                     true.min <- 0
                   }
                   conf.int.lower[k] <- max(true.min, con[[1]][k, 1])

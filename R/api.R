@@ -18,12 +18,32 @@ api.url.maker <- function(endyear, span, key, variables, dataset, geo.call) {
     api.url
 }
 
-# a function to install a users key for use in this and future sessions writes to
-# package extdata directory
+# a function to install a users key for use in this and future sessions writes
+# to package extdata directory
+## N.B. You can also just put it in `options` in your .Rprofile
+api.key.install <- function (key) {
+    extdata.path <- file.path(system.file(package = "acs"), "extdata")
+    if (!dir.exists(extdata.path)) {
+        dir.create(extdata.path)
+    }
+    save(key, file=file.path(extdata.path, "key.rda"))
+}
 
-api.key.install <- function(key, file = "key.rda") {
-    dir.create(paste(system.file(package = "acs"), "extdata", sep = "/"), showWarnings = FALSE)
-    save(key, file = paste(system.file("extdata", package = "acs"), file, sep = "/"))
+api.key.load <- function () {
+    key <- getOption("census.api.key")
+    if (is.null(key)) {
+        ## It's not set. Try key.rda
+        keyfile <- file.path(system.file(package="acs"), "extdata", "key.rda")
+        if (file.exists(keyfile)) {
+            load(keyfile)
+            ## Set it in options for next time
+            options(census.api.key=key)
+        } else {
+            ## Empty key works sometimes!
+            key <- ""
+        }
+    }
+    return(key)
 }
 
 # a function to migrate a previously installed api.key after package update

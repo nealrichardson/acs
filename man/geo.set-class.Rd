@@ -60,7 +60,7 @@ all the geographies in a single list.  The combination operator
 embedding sets within sets.  When working with nested sets like this,
 the "combine" flag can be set at each level to aggregate subsets within
 the structure (although be careful --- if a higher level of set includes
-"combine=T" you'll never actually see the unaggregated subsets deeper
+"combine=TRUE" you'll never actually see the unaggregated subsets deeper
 down).
 
 Using these different techniques, users are able to create whatever sort

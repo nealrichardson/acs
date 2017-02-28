@@ -1,13 +1,18 @@
-geo.make <- function(us, region, division, state, county, county.subdivision, place,
-    tract, block.group, msa, csa, necta, urban.area, congressional.district, state.legislative.district.upper,
-    state.legislative.district.lower, puma, zip.code, american.indian.area, school.district.elementary,
-    school.district.secondary, school.district.unified, combine = FALSE, combine.term = "aggregate",
-    check = FALSE, key = "auto") {
-    .geo.unit.make <- function(us, region, division, state, county, county.subdivision,
+geo.make <- function(us, region, division, state, county, county.subdivision,
+    place, tract, block.group, msa, csa, necta, urban.area,
+    congressional.district, state.legislative.district.upper,
+    state.legislative.district.lower, puma, zip.code, american.indian.area,
+    school.district.elementary, school.district.secondary,
+    school.district.unified, combine=FALSE, combine.term = "aggregate",
+    check=FALSE, key=api.key.load()) {
+
+    .geo.unit.make <- function (us, region, division, state, county,
+        county.subdivision,
         place, tract, block.group, msa, csa, necta, urban.area, congressional.district,
         state.legislative.district.upper, state.legislative.district.lower, puma,
         zip.code, american.indian.area, school.district.elementary, school.district.secondary,
         school.district.unified) {
+
         geo.obj <- NA
         nargs <- nargs()
         ## geos with only one argument: sumlev 010, 020, 030, 350, 400, 860 sumlev 010 --
@@ -371,9 +376,7 @@ geo.make <- function(us, region, division, state, county, county.subdivision, pl
         geo.obj
     }
     ## after here is actual function to recur through more complex requests recycle!
-    if (key == "auto" && check == T) {
-        load(system.file("extdata/key.rda", package = "acs"))
-    }
+
     arglist <- as.list(environment())
     missing.args <- unlist(lapply(arglist, is.symbol))
     arglist <- arglist[!missing.args]
@@ -396,7 +399,7 @@ geo.make <- function(us, region, division, state, county, county.subdivision, pl
         geo.set.obj@combine <- combine
         geo.set.obj@combine.term <- combine.term
     }
-    if (check == T) {
+    if (check) {
         for (i in 1:length(geo.set.obj)) {
             cat(paste("Testing geography item ", i, ": ", name(geo.list(geo.set.obj[i])),
                 " .... ", sep = ""))

@@ -19,7 +19,7 @@
   \code{"divide.acs"} function.  (See details.)}
 
 \usage{
-divide.acs(numerator, denominator, method="ratio", verbose=T, output="result")
+divide.acs(numerator, denominator, method="ratio", verbose=TRUE, output="result")
 }
 
 \arguments{
@@ -45,7 +45,7 @@ unnecessary NaN values in the standard.errors, the package implements
 the recommended Census practice of simply using "ratio-style" division in
 those cases.
 
-If method="proportion" (not the default) and verbose=T (the default),
+If method="proportion" (not the default) and verbose=TRUE(the default),
 \code{division.acs} will provide a warning to indicate when
 "ratio-style" division has been used, including the number of standard
 error cells so affected.  Users wishing to examine a detailed,

@@ -1,20 +1,18 @@
 acs.fetch <- function (endyear, span=5, geography, table.name, table.number,
-    variable, keyword, dataset=c("acs", "sf1", "sf3"), key, col.names="auto", ...) {
+    variable, keyword, dataset=c("acs", "sf1", "sf3"), key=api.key.load(),
+    col.names="auto", ...) {
 
     dataset <- match.arg(dataset)
     census <- dataset != "acs"
 
     var.max <- 40  # most var for acs call; keep even;
     # check some basic stuff about arguments
-    if (missing(key)) {
-        if (file_test("-f", system.file("extdata/key.rda", package="acs"))) {
-            load(system.file("extdata/key.rda", package="acs"))
-        } else if (!is.null(getOption("census.api.key"))) {
-            key <- getOption("census.api.key")
-        } else {
-            warning("'key' required to access Census API site for download;\n  See http://www.census.gov/developers/ to request a key\n  and/or use 'key=' (or run 'api.key.install()') to avoid this error.")
-            return(NA)
-        }
+    if (!is.character(key)) {
+        ## Leaving this message here, though you won't hit it normally.
+        ## TODO: move to an error handler on an API request that actually fails
+        ## because there was no key supplied.
+        ## TODO: move to a "warn once" per session in api.key.load.
+        stop("'key' required to access Census API site for download;\n  See http://www.census.gov/developers/ to request a key\n  and/or use 'key=' (or run 'api.key.install()') to avoid this error.")
     }
     if (missing(endyear)) {
         warning("No endyear provided\n  As of version 2.0, endyear must be explicit.\n  Returning NA.")

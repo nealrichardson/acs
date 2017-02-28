@@ -265,12 +265,11 @@ setMethod("-", signature(e1 = "acs", e2 = "acs"), function(e1, e2) {
     acs.obj
 })
 
-.acs.divider <- function(num, den, proportion, verbose = FALSE, output = "result") {
-    if (proportion == T)
-        header <- .acs.combine.headers(num, den, "/") else header <- .acs.combine.headers(num, den, ":")
+.acs.divider <- function(num, den, proportion, verbose=FALSE, output="result") {
+    header <- .acs.combine.headers(num, den, ifelse(proportion, "/", ":"))
     p <- estimate(num)/estimate(den)
     # start with proportion-style
-    if (proportion == T) {
+    if (isTRUE(proportion)) {
         header$acs.units <- rep(factor("proportion", levels = .acs.unit.levels),
             length(header$acs.units))
         if (verbose) {
@@ -316,7 +315,9 @@ setMethod("-", signature(e1 = "acs", e2 = "acs"), function(e1, e2) {
         list(result = acs.obj, div.method = ratio.report)
     } else if (output == "div.method") {
         ratio.report
-    } else acs.obj
+    } else {
+        acs.obj
+    }
 }
 
 
@@ -461,14 +462,14 @@ confint.acs <- function(object, parm = "all", level = 0.95, alternative = "two.s
     RESULT
 }
 
-setMethod("sum", signature(x = "acs"), function(x, agg.term = c("aggregate", "aggregate"),
+setMethod("sum", "acs", function(x, agg.term = c("aggregate", "aggregate"),
     one.zero = FALSE, ..., na.rm = FALSE) {
     if (length(agg.term) < 2) {
         agg.term[2] <- agg.term[1]
     }
     est <- estimate(x)
     err <- standard.error(x)
-    if (one.zero == T && any(est == 0)) {
+    if (one.zero && any(est == 0)) {
         max.zero.error <- max(err[est == 0])
         err[est == 0] <- c(max.zero.error, rep(0, sum(est == 0) - 1))
     }

@@ -17,8 +17,8 @@ standard errors to accompany estimates (see \code{help(acs)}).}
 
 \usage{
 acs.fetch(endyear, span = 5, geography, table.name,
-      table.number, variable, keyword, dataset = "acs",
-      key, col.names = "auto", ...)
+      table.number, variable, keyword, dataset = c("acs", "sf1", "sf3"),
+      key = api.key.load(), col.names = "auto", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -34,20 +34,20 @@ be 2011)}
   \item{geography}{a valid geo.set object specifying the census
     geography or geographies to be fetched; can be created "on the fly"
     with a call to \code{geo.make()} }
-  
+
   \item{table.name}{a string giving the search term(s) to find in the
     name of the ACS census table (for example, "Sex" or "Age"); accepts
     multiple words, which must all be found in the returned table names;
     always case-sensitive.  (Note: when set, this variable is passed to
     an internal call to acs.lookup---see
     \code{\link{acs.lookup}}).}
-  
+
   \item{table.number}{a string (not a number) indicating the table from
       the Census to fetch; examples: "B01003" or "B23013"; always
       case-sensitive. Used to fetch all variables for a given table
       number; if "table.number" is provided, other lookup variables
       ("table.name" or "keyword") will be ignored.}
-    
+
     \item{variable}{an object of acs.lookup class, or a string (not a
       number) or vector of strings indicating the exact variable
       number(s) the Census to fetch.  See details for more.
@@ -79,7 +79,7 @@ be 2011)}
       "auto" (the default), census variable codes will be used as column
       names for the fetched data; when "pretty", descriptive variables
       names will be used; otherwise col.names will be used.}
-    
+
     \item{\dots}{ Not used interactively (reserved for recursive calls).
     }}
 
@@ -107,7 +107,7 @@ variable lookup tables.)
 
 \itemize{ \item{American Community Survey 5-Year Data (dataset="acs",
   span=5): 2005-2009 through 2010-2014}
-   
+
    \item{American Community Survey 3 Year Data (dataset="acs", span=3):
    2013, 2012}
 
@@ -136,9 +136,9 @@ a whole table, just a few columns of it, such as variable="B05001_006"
 or variable=c("B16001_058", "B16001_059")), you can ask for that with
 \code{acs.fetch(variable="these.variable.codes", ...)}.
 
-Note: when "combine=T" for the fetched geo.set, data will be aggregated
+Note: when "combine=TRUE" for the fetched geo.set, data will be aggregated
 in the resulting acs abject.  Some users may therefore wish to specify
-"one.zero=T" as an additional argument to \code{acs.fetch}; see
+"one.zero=TRUE" as an additional argument to \code{acs.fetch}; see
 \code{\link{sum-methods}}. }
 
 \value{Returns a new acs-class object with estimates, standard errors
@@ -158,4 +158,3 @@ Ezra Haber Glenn \email{eglenn@mit.edu}
 \seealso{
 \code{\link{acs.lookup}}.
 }
-
