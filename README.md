@@ -1,5 +1,8 @@
 # acs
 
+[![Build Status](https://travis-ci.org/nealrichardson/acs.png?branch=master)](https://travis-ci.org/nealrichardson/acs)  [![codecov](https://codecov.io/gh/nealrichardson/acs/branch/master/graph/badge.svg)](https://codecov.io/gh/nealrichardson/acs) [![Build status](https://ci.appveyor.com/api/projects/status/bup76jmyu3b91ln6?svg=true)](https://ci.appveyor.com/project/nealrichardson/acs)
+
+
 Provides a general toolkit for downloading, managing, analyzing, and
 presenting data from the U.S. Census, including SF1 (Decennial
 short-form), SF3 (Decennial long-form), and the American Community
@@ -24,12 +27,12 @@ specify "endyear=" for *all* calls.
 The package now provides full support for *all ACS, SF1, and SF3 data*
 currently available via the Census API, including ACS data from
 2005-2014 and Decennial data from 1990, 2000, and 2010.
- 
+
 You can track development of the `acs` package at
 http://eglenn.scripts.mit.edu/citystate/.
 
 
-## Installation/Upgrading 
+## Installation/Upgrading
 ### Installation
 
 To install the updated version, simply fire up an R session and type:
@@ -87,7 +90,7 @@ different ways.  That said, the general workflow is fairly simple:
 
  + use the acs.fetch() function to download data for your new
    geography; and then
- 
+
  + use the existing functions in the package to work with your data.
 
 To learn more, consult the following:
@@ -114,9 +117,9 @@ To learn more, consult the following:
 
  + New ACS Data: the package now provides on-board support for all
    endyears and spans currently available through the API, including:
-     
+
     + American Community Survey 5-Year Data (2005-2009 through 2010-2014)
-   
+
     + American Community Survey 3 Year Data (2013, 2012)
 
     + American Community Survey 1 Year Data (2014, 2013, 2012, 2011)
@@ -138,7 +141,7 @@ To learn more, consult the following:
    + CPI tables: the CPI tables used for currency.year() and
      currency.convert() have been updated to include data up
      through 2015.
- 
+
    + acs.fetching with saved acs.lookup results: the results of
      acs.lookup can still be saved and passed to acs.fetch via the
      "variable=" option, with a slight change: under v. 1.2, the
