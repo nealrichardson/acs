@@ -23,14 +23,14 @@ Suggests:
     testthat
 Imports:
     graphics,
+    methods,
     stats,
     utils,
-    RCurl
-Depends:
-    R (>= 2.10),
-    stringr,
-    methods,
     plyr,
+    RCurl,
+    stringr,
     XML
+Depends:
+    R (>= 2.10)
 License: GPL-3
 LazyData: yes

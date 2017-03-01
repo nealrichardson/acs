@@ -37,7 +37,7 @@ exportMethods(
     "span",
     "standard.error",
     "sum",
-    "summary" 
+    "summary"
 )
 S3method(confint,acs)
 S3method(dim,acs)
@@ -47,13 +47,13 @@ exportClasses(
     "acs",
      "acs.lookup",
      "geo",
-     "geo.set" 
+     "geo.set"
 )
-import(XML)
 import(methods)
-import(plyr)
-import(stringr)
 importFrom(utils,prompt)
+importFrom(plyr,rbind.fill)
+importFrom(stringr, str_extract, str_sub)
+importFrom(XML, free, xmlGetAttr, xmlInternalTreeParse, xpathSApply)
 importFrom("graphics", "abline", "axis", "lines", "par", "points")
 importFrom("stats", "confint", "dnorm", "qnorm")
 importFrom("RCurl", "url.exists")
