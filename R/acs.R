@@ -498,7 +498,10 @@ setMethod("sum", "acs", function(x, agg.term = c("aggregate", "aggregate"),
     acs.obj
 })
 
+## TODO: add names, sort methods
+
 .apply.acs <- function(X, MARGIN, FUN, ...) {
+    ## TODO: these are backwards I think.
     FUN <- match.fun(FUN)
     if (identical(MARGIN, 1)) {
         # apply row-wise

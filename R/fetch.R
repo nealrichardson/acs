@@ -30,26 +30,21 @@ acs.fetch <- function (endyear, span=5, geography, table.name, table.number,
         warning("No search terms provided; returning NA")
         return(NA)
     }
-    if (!missing(variable)) {
+
+    # when variable is NOT provided
+    if (missing(variable)) {
+        Call <- match.call()
+        Call[[1]] <- as.name("acs.lookup")
+        variable <- eval(Call)
+        if (!isS4(variable) && is.na(variable)) {
+            return(NA)
+        }
+    } else {
         if (!missing(keyword) || !missing(table.name) || !missing(table.number)) {
             warning("Cannot specify both 'variable' and 'keyword/table.name/table.number'.\n  Using 'variable' and ignoring others.")
         }
     }
-    # when variable is NOT provided
-    if (missing(variable)) {
-        arglist <- as.list(environment())
-        missing.args <- unlist(lapply(arglist, is.symbol))
-        arglist <- arglist[!missing.args]
-        arglist <- arglist[names(arglist) != "variable"]
-        arglist <- arglist[names(arglist) != "geography"]
-        arglist <- arglist[names(arglist) != "key"]
-        arglist <- arglist[names(arglist) != "col.names"]
-        arglist <- arglist[names(arglist) != "var.max"]
-        variable <- do.call(acs.lookup, arglist)
-        if (!isS4(variable) && is.na(variable)) {
-            return(NA)
-        }
-    }
+
     # when variable is provided
     if (is.acs.lookup(variable)) {
         variables.xml <- results(variable)

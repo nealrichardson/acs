@@ -2,6 +2,9 @@
 
 [![Build Status](https://travis-ci.org/nealrichardson/acs.png?branch=master)](https://travis-ci.org/nealrichardson/acs)  [![codecov](https://codecov.io/gh/nealrichardson/acs/branch/master/graph/badge.svg)](https://codecov.io/gh/nealrichardson/acs) [![Build status](https://ci.appveyor.com/api/projects/status/bup76jmyu3b91ln6?svg=true)](https://ci.appveyor.com/project/nealrichardson/acs)
 
+See NEWS.md for notes on changes from the official 'acs' version 2.0, date 2016-03-18.
+
+-----
 
 Provides a general toolkit for downloading, managing, analyzing, and
 presenting data from the U.S. Census, including SF1 (Decennial

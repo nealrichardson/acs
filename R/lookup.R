@@ -35,8 +35,9 @@ setMethod(f = "[", signature = "acs.lookup", definition = function(x, i, j, ...,
         results = x@results[i, ])
 })
 
-acs.lookup <- function(endyear, span = 5, dataset = "acs", keyword, table.name, table.number,
-    case.sensitive = TRUE) {
+acs.lookup <- function (endyear, span = 5, dataset = "acs", keyword,
+                        table.name, table.number, case.sensitive = TRUE, ...) {
+
     arglist <- as.list(environment())
     if (!missing(table.number)) {
         if (!missing(table.name))
