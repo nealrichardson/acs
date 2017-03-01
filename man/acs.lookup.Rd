@@ -29,7 +29,7 @@ Census.  }
 
 \usage{
 acs.lookup(endyear, span = 5, dataset = "acs", keyword,
-     table.name, table.number, case.sensitive = TRUE)
+     table.name, table.number, case.sensitive = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -68,6 +68,8 @@ acs.lookup(endyear, span = 5, dataset = "acs", keyword,
       entirely consistent in capitalization in table and variable names,
       so setting \code{case.sensitive=FALSE} may be useful in finding all
       possible matches.}
+    
+    \item{...}{additional arguments, ignored}
   }
 
 \details{

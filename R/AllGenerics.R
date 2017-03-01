@@ -8,6 +8,13 @@ setGeneric("modified", function (object) standardGeneric("modified"))
 setGeneric("results", function (object) standardGeneric("results"))
 setGeneric("estimate", function (object) standardGeneric("estimate"))
 setGeneric("standard.error", function (object) standardGeneric("standard.error"))
+setGeneric("api.for", function (object) standardGeneric("api.for"))
+setGeneric("api.in", function (object) standardGeneric("api.in"))
+setGeneric("name", function (object) standardGeneric("name"))
+setGeneric("sumlev", function (object) standardGeneric("sumlev"))
+setGeneric("combine", function (object) standardGeneric("combine"))
+setGeneric("combine.term", function (object) standardGeneric("combine.term"))
+setGeneric("geo.list", function (object) standardGeneric("geo.list"))
 
 setGeneric("geography<-", function(object, value) standardGeneric("geography<-"))
 setGeneric("endyear<-", function (object, value) standardGeneric("endyear<-"))
@@ -17,5 +24,8 @@ setGeneric("currency.year<-",
 setGeneric("acs.units<-", function (x, value) standardGeneric("acs.units<-"))
 setGeneric("acs.colnames<-",
     function (x, value) standardGeneric("acs.colnames<-"))
+setGeneric("combine<-", function (object, value) standardGeneric("combine<-"))
+setGeneric("combine.term<-",
+    function (object, value) standardGeneric("combine.term<-"))
 
 setGeneric("apply")

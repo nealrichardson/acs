@@ -1,73 +1,37 @@
-setClass(Class = "geo", representation = representation(api.for = "list", api.in = "list",
-    name = "character", sumlev = "numeric"), prototype())
+setClass(Class = "geo", representation = representation(
+    api.for = "list",
+    api.in = "list",
+    name = "character",
+    sumlev = "numeric"),
+    prototype())
 
 is.geo <- function (object) class(object) == "geo"
 
-if (!isGeneric("api.for")) {
-    setGeneric("api.for", def = function(object) {
-        standardGeneric("api.for")
-    })
-} else {
-}
 setMethod("api.for", "geo", function(object) object@api.for)
-
-if (!isGeneric("api.in")) {
-    setGeneric("api.in", def = function(object) {
-        standardGeneric("api.in")
-    })
-} else {
-}
 setMethod("api.in", "geo", function(object) object@api.in)
-
-if (!isGeneric("name")) {
-    setGeneric("name", def = function(object) {
-        standardGeneric("name")
-    })
-} else {
-}
 setMethod("name", "geo", function(object) object@name)
-
-if (!isGeneric("sumlev")) {
-    setGeneric("sumlev", def = function(object) {
-        standardGeneric("sumlev")
-    })
-} else {
-}
 setMethod("sumlev", "geo", function(object) object@sumlev)
 
-setClass(Class = "geo.set", representation = representation(geo.list = "list", combine = "logical",
-    combine.term = "character"), prototype(combine = TRUE, combine.term = "aggregate"))
-is.geo.set <- function(object) {
-    if (class(object) == "geo.set") {
-        TRUE
-    } else {
-        FALSE
-    }
-}
-if (!isGeneric("combine")) {
-    setGeneric("combine", def = function(object) {
-        standardGeneric("combine")
-    })
-} else {
-}
-setMethod("combine", "geo.set", function(object) object@combine)
-if (!isGeneric("combine.term")) {
-    setGeneric("combine.term", def = function(object) {
-        standardGeneric("combine.term")
-    })
-} else {
-}
-setMethod("combine.term", "geo.set", function(object) object@combine.term)
-if (!isGeneric("geo.list")) {
-    setGeneric("geo.list", def = function(object) {
-        standardGeneric("geo.list")
-    })
-} else {
-}
+setClass(Class = "geo.set", representation = representation(
+    geo.list = "list",
+    combine = "logical",
+    combine.term = "character"
+    ),
+    prototype(
+        combine = TRUE,
+        combine.term = "aggregate"
+    )
+)
+is.geo.set <- function (object) class(object) == "geo.set"
 
+setMethod("combine", "geo.set", function(object) object@combine)
+setMethod("combine.term", "geo.set", function(object) object@combine.term)
 setMethod("geo.list", "geo.set", function(object) {
-    if (length(object@geo.list) == 1)
-        object@geo.list[[1]] else object@geo.list
+    if (length(object@geo.list) == 1) {
+        object@geo.list[[1]]
+    } else {
+        object@geo.list
+    }
 })
 
 setMethod("show", signature(object = "geo"), function(object) {
@@ -87,8 +51,9 @@ setMethod("+", signature(e1 = "geo.set", e2 = "geo"), function(e1, e2) {
     geo.set.obj
 })
 setMethod("+", signature(e1 = "geo", e2 = "geo.set"), function(e1, e2) {
-    geo.set.obj <- new(Class = "geo.set", combine = combine(e2), geo.list = c(e1,
-        geo.list(e2)))
+    geo.set.obj <- new(Class = "geo.set",
+        combine = combine(e2),
+        geo.list = c(e1, geo.list(e2)))
     geo.set.obj
 })
 
@@ -204,14 +169,7 @@ setReplaceMethod(f = "[[", signature = "geo.set", definition = function(x, i, j,
 ## (!isGeneric('length')) { setGeneric('length',
 ## def=function(x){standardGeneric('length')})}else{}
 
-setMethod("length", "geo.set", function(x) length(x@geo.list))
-
-if (!isGeneric("combine<-")) {
-    setGeneric("combine<-", def = function(object, value) {
-        standardGeneric("combine<-")
-    })
-} else {
-}
+setMethod("length", "geo.set", function (x) length(x@geo.list))
 
 setReplaceMethod(f = "combine", signature = "geo.set", definition = function(object,
     value) {
@@ -219,13 +177,6 @@ setReplaceMethod(f = "combine", signature = "geo.set", definition = function(obj
     validObject(object)
     return(object)
 })
-
-if (!isGeneric("combine.term<-")) {
-    setGeneric("combine.term<-", def = function(object, value) {
-        standardGeneric("combine.term<-")
-    })
-} else {
-}
 
 setReplaceMethod(f = "combine.term", signature = "geo.set", definition = function(object,
     value) {
