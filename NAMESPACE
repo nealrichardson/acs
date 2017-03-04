@@ -49,7 +49,6 @@ exportClasses(
      "geo",
      "geo.set"
 )
-import(methods)
 importFrom(utils,prompt)
 importFrom(plyr,rbind.fill)
 importFrom(stringr, str_extract, str_sub)
@@ -58,3 +57,4 @@ importFrom("graphics", "abline", "axis", "lines", "par", "points")
 importFrom("stats", "confint", "dnorm", "qnorm")
 importFrom("RCurl", "url.exists")
 importFrom("utils", "data", "file_test", "head", "read.csv", "tail", "unzip", "download.file")
+importFrom("methods", "hasArg", "new", "show", "validObject")
