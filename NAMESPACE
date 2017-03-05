@@ -49,6 +49,8 @@ exportClasses(
      "geo",
      "geo.set"
 )
+importFrom(httr, GET, content, stop_for_status)
+importFrom(jsonlite, fromJSON)
 importFrom(utils,prompt)
 importFrom(plyr,rbind.fill)
 importFrom(stringr, str_extract, str_sub)

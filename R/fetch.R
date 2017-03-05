@@ -146,47 +146,40 @@ acs.fetch <- function (endyear, span=5, geography, table.name, table.number,
     ## Get the data from the Census API
     api.url <- api.url.maker(endyear=endyear, span=span, key=key,
         variables=variables, dataset=dataset, geo.call=geography)
-    geo.length <- length(api.in(geography)) + 2
     # adding check to stop bad url / maybe do this later
-    url.test <- url.exists(api.url, .header=TRUE)
-    if (url.test["statusMessage"] != "OK") {
-        warning(call.=FALSE, paste("No data found at:\n  ", api.url, sep=""))
-    }
-    in.data <- suppressWarnings(read.csv(api.url,
-        na.strings=c("-", "**", "***", "(X)", "N", "null"),
-        stringsAsFactors=FALSE))
+    req <- GET(api.url)
+    stop_for_status(req)
 
-    ## Clean the data
-    in.data <- in.data[, -length(in.data)]  # remove junk NA columns
-    # set geocols
-    geocols <- (length(in.data) - geo.length + 1):length(in.data)
+    in.data <- fromJSON(content(req, "text", encoding="UTF-8"))
+    ## Names are in the first row. Pop them off.
+    nm <- in.data[1,]
+    in.data <- in.data[-1,,drop=FALSE]
+    ## Geography columns are at the end. Pop them off too.
+    geo.length <- length(api.in(geography)) + 2
+    ncols <- ncol(in.data) - geo.length
+    datacols <- 1:ncols
+    geocols <- (ncols + 1):ncol(in.data)
+    GEOGRAPHY <- as.data.frame(in.data[, geocols, drop=FALSE])
+    names(GEOGRAPHY) <- gsub(".", "", nm[geocols], fixed=TRUE)  # remove strange trailing period
+
+    in.data <- matrix(as.numeric(in.data[, datacols]), ncol=ncols)
+    colnames(in.data) <- nm[datacols]
+
     if (identical(col.names[1], "auto")) {
         # check this!
         if (census) {
-            col.names <- names(in.data)[1:(length(in.data) - geo.length)]
+            col.names <- nm[datacols]
         } else {
-            col.names <- names(in.data)[seq(1, (length(in.data) - geo.length), 2)]
+            col.names <- nm[seq(1, ncols, 2)]
         }
-        col.names[1] <- gsub("X..", "", col.names[1])
         col.names <- gsub(pattern="E$", x=col.names, replacement="")
     }
-    datacols <- 1:(length(in.data) - geo.length)
-    in.data[in.data == "*****"] <- 0
-    in.data[[1]] <- gsub("[", "", in.data[[1]], fixed=TRUE)
-    in.data[[length(in.data)]] <- gsub("]", "", in.data[[length(in.data)]], fixed=TRUE)
-    # clean brackets
-    for (i in 1:length(datacols)) {
-        in.data[[i]] <- gsub(",", "", in.data[[i]])
-        in.data[[i]] <- as.numeric(in.data[[i]])
-    }
-    GEOGRAPHY <- as.data.frame(in.data[, geocols])
-    names(GEOGRAPHY) <- gsub(".", "", names(GEOGRAPHY), fixed=TRUE)  # remove strange trailing period
     if (census) {
-        est <- as.matrix(in.data[1:(length(in.data) - geo.length)])
-        se <- as.matrix(0 * (in.data[1:(length(in.data) - geo.length)]))
+        est <- in.data
+        se <- matrix(0, nrow=nrow(est), ncol=ncol(est))
     } else {
-        est <- as.matrix(in.data[, seq(1, (length(in.data) - geo.length), 2)])
-        se <- as.matrix(in.data[, seq(2, (length(in.data) - geo.length), 2)])
+        est <- in.data[, seq(1, ncols, 2), drop=FALSE]
+        se <- in.data[, seq(2, ncols, 2), drop=FALSE]
         # convert 90% MOE into standard error, correct for 2005 flaw
         se <- se/ifelse(endyear <= 2005, 1.65, 1.645)
     }
