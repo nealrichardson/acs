@@ -49,7 +49,7 @@ exportClasses(
      "geo",
      "geo.set"
 )
-importFrom(httr, GET, content, stop_for_status)
+importFrom(httr, GET, content, http_status)
 importFrom(jsonlite, fromJSON)
 importFrom(utils,prompt)
 importFrom(plyr,rbind.fill)

@@ -93,7 +93,7 @@ acs.lookup <- function (endyear, span = 5, dataset = "acs", keyword,
                 sep = "")
             eglenn.url <- paste0("http://web.mit.edu/eglenn/www/acs/acs-variables/",
                 doc.string)
-            tryCactch(doc <- xmlInternalTreeParse(eglenn.url),
+            tryCatch(doc <- xmlInternalTreeParse(eglenn.url),
                 error=function (e) {
                     stop("As of the date of this version of the acs package\n  no variable lookup tables were available\n  for this dataset/endyear/span combination;\n  perhaps try a different combination...?", call.=FALSE)
                 })
