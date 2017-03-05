@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/nealrichardson/acs.png?branch=master)](https://travis-ci.org/nealrichardson/acs)  [![codecov](https://codecov.io/gh/nealrichardson/acs/branch/master/graph/badge.svg)](https://codecov.io/gh/nealrichardson/acs) [![Build status](https://ci.appveyor.com/api/projects/status/bup76jmyu3b91ln6?svg=true)](https://ci.appveyor.com/project/nealrichardson/acs)
 
-See NEWS.md for notes on changes from the official 'acs' version 2.0, date 2016-03-18.
+See [NEWS.md](https://github.com/nealrichardson/acs/blob/master/NEWS.md) for notes on changes from the official 'acs' version 2.0, date 2016-03-18.
 
 -----
 
@@ -41,7 +41,7 @@ http://eglenn.scripts.mit.edu/citystate/.
 To install the updated version, simply fire up an R session and type:
 
 ```R
-install.packages("acs", clean=T)
+install.packages("acs", clean=TRUE)
 ```
 
 ### Upgrading
@@ -49,7 +49,7 @@ install.packages("acs", clean=T)
 If you've previously installed the package, you can upgrade with:
 
 ```R
-update.packages("acs", clean=T)
+update.packages("acs", clean=TRUE)
 ```
 ### api.keys migration
 
