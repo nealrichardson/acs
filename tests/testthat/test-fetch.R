@@ -1,7 +1,7 @@
 context("acs.fetch")
 
 test_that("1990 census doesn't take 'NAME'", {
-    expect_error(acsGET("http://api.census.gov/data/1990/sf3?key=&get=P0540003,P0540004,NAME&for=state:6"),
+    expect_error(.acsGET("http://api.census.gov/data/1990/sf3?key=&get=P0540003,P0540004,NAME&for=state:6"),
         "error: error: unknown variable 'NAME'")
     expect_is(acs.fetch(dataset="sf3",
             keyword="SCHOOL/ELEM OR HS", endyear=1990,

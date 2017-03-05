@@ -144,7 +144,7 @@ acs.fetch <- function (endyear, span=5, geography, table.name, table.number,
     ## Get the data from the Census API
     api.url <- api.url.maker(endyear=endyear, span=span, key=key,
         variables=variables, dataset=dataset, geo.call=geography)
-    in.data <- acsGET(api.url)
+    in.data <- .acsGET(api.url)
 
     ## Names are in the first row. Pop them off.
     nm <- in.data[1,]
@@ -195,7 +195,7 @@ acs.fetch <- function (endyear, span=5, geography, table.name, table.number,
     acs.obj
 }
 
-acsGET <- function (...) {
+.acsGET <- function (...) {
     response <- GET(...)
     status <- http_status(response)
     if (tolower(status$category) == "success") {
