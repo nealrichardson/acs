@@ -49,12 +49,13 @@ exportClasses(
      "geo",
      "geo.set"
 )
+importFrom(httr, GET, content, http_status)
+importFrom(jsonlite, fromJSON)
 importFrom(utils,prompt)
 importFrom(plyr,rbind.fill)
 importFrom(stringr, str_extract, str_sub)
 importFrom(XML, free, xmlGetAttr, xmlInternalTreeParse, xpathSApply)
 importFrom("graphics", "abline", "axis", "lines", "par", "points")
 importFrom("stats", "confint", "dnorm", "qnorm")
-importFrom("RCurl", "url.exists")
 importFrom("utils", "data", "file_test", "head", "read.csv", "tail", "unzip", "download.file")
 importFrom("methods", "hasArg", "new", "show", "validObject")

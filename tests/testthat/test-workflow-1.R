@@ -1,7 +1,10 @@
 context("A working example")
 
 ## TODO: mock this request
-z <- acs.fetch(dataset="acs", table.name="SEX BY SCHOOL ENROLLMENT BY TYPE OF SCHOOL BY AGE FOR THE POPULATION 3 YEARS AND OVER", endyear=2015, case.sensitive=FALSE, geo=geo.make(state="CA", county="*"))
+with_mock_API({
+    z <- acs.fetch(dataset="acs", table.name="SEX BY SCHOOL ENROLLMENT BY TYPE OF SCHOOL BY AGE FOR THE POPULATION 3 YEARS AND OVER", endyear=2015, case.sensitive=FALSE, geo=geo.make(state="CA", county="*"))
+})
+
 
 test_that("Fetch with lots of variables (recursion)", {
     expect_identical(dim(z), c(58L, 57L))

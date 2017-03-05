@@ -20,14 +20,15 @@ Description: Provides a general toolkit for downloading, managing,
   standard operations on acs objects and present/plot data in
   statistically appropriate ways. Current version is 2.0 +/- .033.
 Suggests:
-    testthat
+    httptest
 Imports:
     graphics,
     methods,
     stats,
     utils,
+    httr,
+    jsonlite,
     plyr,
-    RCurl,
     stringr,
     XML
 Depends:

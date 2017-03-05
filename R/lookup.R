@@ -158,13 +158,12 @@ acs.lookup <- function (endyear, span = 5, dataset = "acs", keyword,
         }
     }
     if (missing(table.name) && missing(keyword)) {
-        warning("No search terms provided; returning NA")
-        return(NA)
+        stop("No search terms provided", call.=FALSE)
     }
     if (!missing(keyword) && sum(unlist(lapply(X = keyword, FUN = grepl, "Margin Of Error For",
         ignore.case = TRUE))) > 0) {
-        warning("'keyword' marching string 'Margin Of Error For' not permitted\n  Returning NA")
-        return(NA)
+        stop("'keyword' marching string 'Margin Of Error For' not permitted",
+            call.=FALSE)
     }
     if (!case.sensitive) {
         if (!missing(table.name))
@@ -178,44 +177,35 @@ acs.lookup <- function (endyear, span = 5, dataset = "acs", keyword,
     # name when saved locally or on eglenn archive doc.url is path to census file for
     # XML variables
     if (dataset == "acs") {
-        doc.string <- paste(dataset, "_", span, "yr_", endyear, "_var.xml.gz", sep = "")
-        doc.url <- paste("http://api.census.gov/data/", endyear, "/acs", span, "/variables.xml",
-            sep = "")
+        doc.string <- paste0(dataset, "_", span, "yr_", endyear, "_var.xml.gz")
+        doc.url <- paste0("http://api.census.gov/data/", endyear, "/acs", span, "/variables.xml")
     }
     if (dataset == "sf1" | dataset == "sf3") {
-        doc.string <- paste(dataset, "_", endyear, ".xml.gz", sep = "")
-        doc.url <- paste("http://api.census.gov/data/", endyear, "/", dataset, "/variables.xml",
-            sep = "")
+        doc.string <- paste0(dataset, "_", endyear, ".xml.gz")
+        doc.url <- paste0("http://api.census.gov/data/", endyear, "/", dataset, "/variables.xml")
         span <- 0
     }
+
     # first look for XML table internally
-    if (file.exists(system.file(paste("extdata/", doc.string, sep = ""), package = "acs"))) {
-        doc <- xmlInternalTreeParse(system.file(paste("extdata/", doc.string, sep = ""),
-            package = "acs"))
-    } else if (url.exists(doc.url)) {
-        # next check online at census site
-
-        doc <- xmlInternalTreeParse(doc.url)
-        # finally, check personal eglenn archive
-
-    } else if (url.exists(paste("http://web.mit.edu/eglenn/www/acs/acs-variables/",
-        doc.string, sep = ""))) {
-        # since only here is issues, give some advice
-        warning(paste("XML variable lookup tables for this request\n  seem to be missing from '",
-            doc.url, "';\n  temporarily downloading and using archived copies instead;\n  since this is *much* slower, recommend running\n  acs.tables.install()"),
-            sep = "")
-        doc.download <- tempfile()
-        download.file(url = paste("http://web.mit.edu/eglenn/www/acs/acs-variables/",
-            doc.string, sep = ""), destfile = doc.download)
-        doc <- xmlInternalTreeParse(doc.download)
-        unlink(doc.download)
+    local.table <- system.file(paste("extdata/", doc.string, sep = ""),
+        package = "acs")
+    if (file.exists(local.table)) {
+        doc <- xmlInternalTreeParse(local.table)
     } else {
-        # if found nowhere, issue warning and return NA
-
-        warning("As of the date of this version of the acs package\n  no variable lookup tables were available\n  for this dataset/endyear/span combination;\n  perhaps try a different combination...?\n  Returning NA;")
-        return(NA)
+        doc <- try(xmlInternalTreeParse(doc.url), silent=TRUE)
+        if (inherits(doc, "try-error")) {
+            # finally, check personal eglenn archive
+            warning(paste("XML variable lookup tables for this request\n  seem to be missing from '",
+                doc.url, "';\n  temporarily downloading and using archived copies instead;\n  since this is *much* slower, recommend running\n  acs.tables.install()"),
+                sep = "")
+            eglenn.url <- paste0("http://web.mit.edu/eglenn/www/acs/acs-variables/",
+                doc.string)
+            tryCatch(doc <- xmlInternalTreeParse(eglenn.url),
+                error=function (e) {
+                    stop("As of the date of this version of the acs package\n  no variable lookup tables were available\n  for this dataset/endyear/span combination;\n  perhaps try a different combination...?", call.=FALSE)
+                })
+        }
     }
-
     if (!missing(keyword)) {
         if (!case.sensitive) {
             str.a <- "contains(translate(@label, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'),'"
@@ -288,15 +278,13 @@ acs.lookup <- function (endyear, span = 5, dataset = "acs", keyword,
     # get table numbers
     table.numbers <- substr(table.numbers, 1, unlist(lapply(table.numbers, nchar)) -
         1)  # remove trailing period
-    if (dataset == "acs")
-        {
-            # sf1/sf3 table.numbers have already been reordered!
-            table.numbers <- table.numbers[my.index]
-        }  # added for 2012, since data not sorted
-    if (dataset == "acs" && length(table.numbers) > 0)
-        {
-            table.numbers <- table.numbers[seq(1, length(table.numbers), 2)]
-        }  # only want every other
+    if (dataset == "acs") {
+        # sf1/sf3 table.numbers have already been reordered!
+        table.numbers <- table.numbers[my.index]
+    }  # added for 2012, since data not sorted
+    if (dataset == "acs" && length(table.numbers) > 0) {
+        table.numbers <- table.numbers[seq(1, length(table.numbers), 2)]
+    }  # only want every other
 
     # get variable names
     values <- suppressWarnings(xpathSApply(doc, STRING, namespaces = "ns", xmlGetAttr,

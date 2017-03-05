@@ -2,7 +2,10 @@
 # c('B21003_001E','B21003_001M') geo.call should have 'for' and 'in' 'for' is
 # pairlist, like pairlist(county=05) or c('block+group'='*') 'in' is pairlist
 # including none or more of: state, county, tract, each either number or '*'
-api.url.maker <- function(endyear, span, key, variables, dataset, geo.call) {
+api.url.maker <- function (endyear, span, key, variables, dataset, geo.call) {
+    ## 1990 census calls "NAME" "ANPSADPI"
+    variables <- c(variables, ifelse(endyear == 1990, "ANPSADPI", "NAME"))
+
     variables <- paste0(variables, collapse = ",")
     if (span == 0) {
         span <- ""
@@ -14,7 +17,7 @@ api.url.maker <- function(endyear, span, key, variables, dataset, geo.call) {
     if (!identical(api.in, ""))
         api.in <- paste0("&in=", api.in)
     api.url <- paste0("http://api.census.gov/data/", endyear, "/", dataset, span,
-        "?key=", key, "&get=", variables, ",NAME&", api.for, api.in)
+        "?key=", key, "&get=", variables, "&", api.for, api.in)
     api.url
 }
 
