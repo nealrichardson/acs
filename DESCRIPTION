@@ -27,8 +27,8 @@ Imports:
     stats,
     utils,
     httr,
+    jsonlite,
     plyr,
-    RCurl,
     stringr,
     XML
 Depends:
