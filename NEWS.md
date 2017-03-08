@@ -8,10 +8,12 @@
 ## Fixes
 
 * Fix querying of 1990 census, which fails if "NAME" is specified as a variable; it uses "ANPSADPI" instead
+* Allow querying all counties (`for=county:*`) without requiring a state. 2015 ACS at least supports this geography.
 * Performance improvements to parsing results in `acs.fetch`
+* Stop on validation checks rather than warning and returning `NA`, which often just errored further downstream where `NA` was an invalid input.
 
 ## Internal
 
 * Code linting using [formatR](https://yihui.name/formatr/) and reorganization into multiple files
 * Moved 'Depends:' packages to 'Imports:'
-* Remove dependency on 'RCurl' in favor of '[httr](https://github.com/hadley/httr/)'. Use '[httptest](https://github.com/nealrichardson/httptest/)' to allow test running without hitting the Census API.
+* Remove dependency on 'RCurl' in favor of [httr](https://github.com/hadley/httr/)/, and take advantage of query caching in [httpcache](https://github.com/nealrichards/httpcache/). Use [httptest](https://github.com/nealrichardson/httptest/) to allow test running without hitting the Census API.

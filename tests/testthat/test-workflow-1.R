@@ -1,6 +1,5 @@
 context("A working example")
 
-## TODO: mock this request
 with_mock_API({
     z <- acs.fetch(dataset="acs", table.name="SEX BY SCHOOL ENROLLMENT BY TYPE OF SCHOOL BY AGE FOR THE POPULATION 3 YEARS AND OVER", endyear=2015, case.sensitive=FALSE, geo=geo.make(state="CA", county="*"))
 })

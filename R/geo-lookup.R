@@ -1,10 +1,9 @@
-geo.lookup <- function(state, county, county.subdivision, place, american.indian.area,
+geo.lookup <- function (state, county, county.subdivision, place, american.indian.area,
     school.district, school.district.elementary, school.district.secondary, school.district.unified) {
     # first deal with american indian areas -- only one with no state
     if (!missing(american.indian.area)) {
         if (nargs() > 1) {
-            warning("american indian area selected; no other options allowed; \n  returning NA")
-            return(NA)
+            stop("american indian area selected; no other options allowed")
         }
         if (is.character(american.indian.area)) {
             fips.american.indian.area <- fips.american.indian.area[grepl(paste(american.indian.area,
@@ -22,8 +21,7 @@ geo.lookup <- function(state, county, county.subdivision, place, american.indian
     # all remaining need state
     state.name <- NA
     if (missing(state)) {
-        warning("state required for geo.lookup with these options; \n  returning NA")
-        return(NA)
+        stop("state required for geo.lookup with these options")
     }
     for (i in 1:length(state)) {
         if (is.character(state[i])) {
@@ -38,8 +36,7 @@ geo.lookup <- function(state, county, county.subdivision, place, american.indian
     state <- state[state %in% fips.state$STATE]  # remove non-matches
     state.name <- fips.state[fips.state$STATE %in% state, 3]
     if (length(state) == 0) {
-        warning("No valid state names match search string;\n  returning NA")
-        return(NA)
+        stop("No valid state names match search string")
     }
     if (length(state) > 1) {
         state <- as.integer(state)

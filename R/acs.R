@@ -26,11 +26,11 @@ globalVariables(c("fips.state", "fips.school", "fips.county.subdivision",
 
 # .acs.dimnames() ensures that a returned acs object includes proper row
 # (geography) and column (col.names) labels
-
 .acs.dimnames <- function(acs.obj) {
-    dimnames(acs.obj@estimate) <- list(acs.obj@geography[[1]], acs.obj@acs.colnames)
-    dimnames(acs.obj@standard.error) <- list(acs.obj@geography[[1]], acs.obj@acs.colnames)
-    acs.obj
+    dims <- list(acs.obj@geography[[1]], acs.obj@acs.colnames)
+    dimnames(acs.obj@estimate) <- dims
+    dimnames(acs.obj@standard.error) <- dims
+    return(acs.obj)
 }
 
 # .acs.combine.headers() create metadata and row/column names for operations that

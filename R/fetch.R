@@ -34,9 +34,6 @@ acs.fetch <- function (endyear, span=5, geography, table.name, table.number,
         Call <- match.call()
         Call[[1]] <- as.name("acs.lookup")
         variable <- eval(Call)
-        if (!isS4(variable) && is.na(variable)) {
-            return(NA)
-        }
     } else {
         if (!missing(keyword) || !missing(table.name) || !missing(table.number)) {
             warning("Cannot specify both 'variable' and 'keyword/table.name/table.number'.\n  Using 'variable' and ignoring others.")
@@ -83,8 +80,8 @@ acs.fetch <- function (endyear, span=5, geography, table.name, table.number,
             warning("\"pretty\" col.names not available when variable codes provided.\n  Using standard variable code names for columns.")
             col.names <- "auto"
         } else {
-            col.names <- paste(variables.xml$table.name, variables.xml$variable.name,
-                sep=": ")
+            col.names <- paste(variables.xml$table.name,
+                variables.xml$variable.name, sep=": ")
         }
     }
     if (identical(col.names, "auto")) {
@@ -151,8 +148,7 @@ acs.fetch <- function (endyear, span=5, geography, table.name, table.number,
     in.data <- in.data[-1,,drop=FALSE]
 
     ## Geography columns are at the end. Pop them off too.
-    geo.length <- length(api.in(geography)) + 2
-    ncols <- ncol(in.data) - geo.length
+    ncols <- ncol(in.data) - .ngeocol(geography)
     datacols <- 1:ncols
     geocols <- (ncols + 1):ncol(in.data)
     GEOGRAPHY <- as.data.frame(in.data[, geocols, drop=FALSE])
@@ -207,5 +203,16 @@ acs.fetch <- function (endyear, span=5, geography, table.name, table.number,
             msg <- paste(msg, msg2, sep=": ")
         }
         stop(msg, call.=FALSE)
+    }
+}
+
+.ngeocol <- function (geography) {
+    ## Special-case(s)
+    if (identical(api.for(geography), list(county="*"))
+        && length(api.in(geography)) == 0) {
+
+        return(3L)
+    } else {
+        return(length(api.in(geography)) + 2L)
     }
 }

@@ -36,5 +36,10 @@ with_mock_API({
         expect_identical(dim(z), c(1L, 57L))
     })
 })
-## TODO: get more working examples with different data shapes from multiple years
-## then swap out the data fetching service so we can get the actual 400 error messages for when the queries fail.
+
+test_that(".ngeocol", {
+    g1 <- geo.make(county="*", state="CA")
+    g2 <- geo.make(county="*") ## API still returns state as a column though
+    expect_identical(.ngeocol(g1[[1]]), 3L)
+    expect_identical(.ngeocol(g2[[1]]), 3L)
+})

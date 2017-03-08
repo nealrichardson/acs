@@ -26,6 +26,7 @@ Imports:
     methods,
     stats,
     utils,
+    httpcache,
     httr,
     jsonlite,
     plyr,
